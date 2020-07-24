@@ -109,15 +109,16 @@ const ProfilestackNavigator = ({ navigation }) => (
 
 const DrawerTabs = () => (
   <Drawer.Navigator>
+    <Drawer.Screen
+      name="Dashboard"
+      component={DashboardstackNavigator}
+    ></Drawer.Screen>
     <Drawer.Screen name="Login" component={LoginstackNavigator} />
     <Drawer.Screen
       name="Profile"
       component={ProfilestackNavigator}
     ></Drawer.Screen>
-    <Drawer.Screen
-      name="Dashboard"
-      component={DashboardstackNavigator}
-    ></Drawer.Screen>
+    
   </Drawer.Navigator>
 );
 
