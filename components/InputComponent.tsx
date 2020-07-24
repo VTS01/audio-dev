@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontSize: 20,
     paddingHorizontal: 10,
-    width: "100%",
+    width: "90%",
   },
   together: {
     paddingHorizontal: 10,
