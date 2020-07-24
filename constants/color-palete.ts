@@ -6,4 +6,5 @@ export default {
   menu: "#27496d",
   logobackground: "#c3edea",
   headerText: "#f0f0f0",
+  shadow: "#251f44",
 };
