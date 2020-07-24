@@ -16,6 +16,7 @@ import { LoginScreen } from "./screens/LoginScreen";
 import * as firebase from "firebase";
 import { firebaseConfig } from "./fireBase/fireBaseConfig";
 import { SignupScreen } from "./screens/SignupScreen";
+import { PlaylistScreen } from "./screens/PlaylistScreen";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -107,6 +108,29 @@ const ProfilestackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
+const PlayListstackNavigator = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Playlist"
+      component={PlaylistScreen}
+      options={{
+        title: "Playlist",
+        headerStyle: styles.appHeader,
+        headerTintColor: Colors.headerText,
+        headerLeft: () => (
+          <Feather
+            name="menu"
+            size={27}
+            color={Colors.headerText}
+            style={styles.menuIcon}
+            onPress={() => navigation.openDrawer()}
+          />
+        ),
+      }}
+    />
+  </Stack.Navigator>
+);
+
 const DrawerTabs = () => (
   <Drawer.Navigator>
     <Drawer.Screen name="Login" component={LoginstackNavigator} />
@@ -117,6 +141,10 @@ const DrawerTabs = () => (
     <Drawer.Screen
       name="Dashboard"
       component={DashboardstackNavigator}
+    ></Drawer.Screen>
+    <Drawer.Screen
+      name="Playlist"
+      component={PlayListstackNavigator}
     ></Drawer.Screen>
   </Drawer.Navigator>
 );
