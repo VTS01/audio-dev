@@ -6,6 +6,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { InputComponent } from './InputComponent'
 import {CategoryDropDown} from './CategoryDropDown' 
 import storage from '@react-native-firebase/storage';
+import { DocumentResult } from "expo-document-picker";
+import * as firebase from 'firebase'
 
 export const FileInput = (props)=>{
     const [fileURI,setFileURI] = useState("")
@@ -19,7 +21,7 @@ export const FileInput = (props)=>{
     }
 
     const handleDocumentPicker = async ()=>{
-        const result = await DocumentPicker.getDocumentAsync({type:'image/*',copyToCacheDirectory : false})
+        const result = await DocumentPicker.getDocumentAsync({type:'image/*',copyToCacheDirectory : false})    
         const fileName = result.type === 'cancel'? '' : result.name
         handleFileNameChange(fileName)
         if(result.type==='success')
@@ -27,8 +29,6 @@ export const FileInput = (props)=>{
             setFileURI(result.uri) 
             setFileSelected(true)
         }
-        console.log(result);
-        console.log(category);
     }
 
     const handleCategoryChange = (categoryName : string)=>{        
@@ -40,14 +40,19 @@ export const FileInput = (props)=>{
     const handleShowDropDown = ()=>{
         setShowDropDown(!showDropDown)
     }
+
     
-    const handleSubmit = async()=>{
+    const handleSubmit = async()=>{        
         if(fileSelected)
         {
-            const ref = storage().ref(`${category}/${fileName}`)
-            const response = await ref.putFile(fileURI)
-            console.log(response);
+            const file = await fetch(fileURI);
+            const blob = await file.blob();
+            const ref = firebase.storage().ref(`${category}/${fileName}`)
+            const response = await ref.put(blob);
+            console.log("****response*******************************************",response);
             setFileSelected(false)
+            setFileURI("")
+            setFileName("")
         }
         props.setShowModal(false)
     }
