@@ -7,7 +7,7 @@ import { Card } from "../Card";
 
 export const Catagory = (props) => {
   return (
-    <View>
+    <View style={styles.catagory}>
       <Text style={styles.catagoryTitle}>{props.catagory}</Text>
       <FlatList
         data={props.data}
@@ -36,6 +36,11 @@ export const Catagory = (props) => {
 };
 
 const styles = StyleSheet.create({
+  catagory:{
+    width : '100%',
+    height: '15%',
+    // borderWidth : 1
+  },
   contentContainer: {
     backgroundColor: Colors.background,
   },

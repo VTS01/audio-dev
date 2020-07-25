@@ -1,22 +1,21 @@
 import React from 'react'
 import {View, Text, TouchableNativeFeedback, StyleSheet, ScrollView} from 'react-native'
-import {CategoryList} from '../Data/CategoriesList'
 
-export const CategoryDropDown = (props)=>{
+export const DropDown = ({data,setSelectedItem,label})=>{
     return(
-        <View style={styles.CategoryList} >
+        <View style={styles.dropdownContainer} >
             <View style={styles.dropdownHeading}>
-                <Text style={styles.dropdownHeadingText}>Select Category</Text>
+                <Text style={styles.dropdownHeadingText}>Select {label}</Text>
             </View>
             <ScrollView>
             {
-                CategoryList.map(category=>{
+                data.map(item=>{
                     return(
                         <TouchableNativeFeedback 
-                            key={category.id} 
-                            onPress={()=>props.setCategoryName(category.type)}>
-                                <View  style={styles.CategoryListItem}>
-                                    <Text style={styles.CategoryListItemText}>{category.type}</Text>
+                            key={item.id} 
+                            onPress={()=>setSelectedItem(item.type)}>
+                                <View  style={styles.dropdownListItem}>
+                                    <Text style={styles.dropdownListItemText}>{item.type}</Text>
                                 </View>
                         </TouchableNativeFeedback>
                     )
@@ -28,7 +27,7 @@ export const CategoryDropDown = (props)=>{
 } 
 
 const styles = StyleSheet.create({
-    CategoryList : {
+    dropdownContainer : {
         width : '90%',
         height : '58%',
         backgroundColor : 'white',
@@ -44,13 +43,13 @@ const styles = StyleSheet.create({
         shadowColor : 'black',
         shadowOpacity : .5,
     },
-    CategoryListItem:{
+    dropdownListItem:{
         padding : 12,
         backgroundColor : 'white',
         elevation : 2,
         marginBottom : 1
     },
-    CategoryListItemText:{
+    dropdownListItemText:{
         fontSize : 15,
     },
     dropdownHeading : {
