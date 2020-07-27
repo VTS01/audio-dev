@@ -1,29 +1,29 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, Alert, Image } from "react-native";
-import Colors from "../constants/color-palete";
-import { InputComponent } from "../components/InputComponent";
-import { Divider } from "../components/Divider";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import firebase from "firebase";
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, Button, Alert, Image} from 'react-native';
+import Colors from '../constants/color-palete';
+import {InputComponent} from '../components/InputComponent';
+import {Divider} from '../components/Divider';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-export const SignupScreen = ({ navigation }) => {
-  const [email,setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import auth from '@react-native-firebase/auth';
+
+export const SignupScreen = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailIsValid, setEmailIsValid] = useState(false);
 
-  const checkEmailValidation = (email : string) =>{
-    const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-.]+(?:\[a-zA-Z0-[9-]+)*$/ ;
-    const isValid = pattern.test(email.trim())
-    if(isValid){
-      setEmailIsValid(true)
+  const checkEmailValidation = (email: string) => {
+    const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-.]+(?:\[a-zA-Z0-[9-]+)*$/;
+    const isValid = pattern.test(email.trim());
+    if (isValid) {
+      setEmailIsValid(true);
+    } else {
+      setEmailIsValid(false);
     }
-    else{
-      setEmailIsValid(false)
-    }
-  }
+  };
 
   const handleEmailChange = (email: string) => {
-    checkEmailValidation(email)
+    checkEmailValidation(email);
     setEmail(email);
   };
 
@@ -32,39 +32,35 @@ export const SignupScreen = ({ navigation }) => {
   };
 
   const loginWithEmail = () => {
-    firebase
-      .auth()
+    auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate("Dashboard");
+        navigation.navigate('Dashboard');
       })
       .catch(() => {
-        Alert.alert("User not exist", "Please sign up", [{ text: "Ok" }]);
+        Alert.alert('User not exist', 'Please sign up', [{text: 'Ok'}]);
       });
   };
 
   const signupWithEmail = () => {
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email,password)
-      .then(()=>{
+    auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
         loginWithEmail();
       })
-      .catch((error)=>{
-        Alert.alert(
-          "Alert!!",
-          `${error.message}`,
-          [{
-            text : 'ok',
-            style:'cancel'
-          }]
-          )
-      })
-  }
+      .catch((error) => {
+        Alert.alert('Alert!!', `${error.message}`, [
+          {
+            text: 'ok',
+            style: 'cancel',
+          },
+        ]);
+      });
+  };
 
   return (
     <View style={styles.screen}>
-      <Image source={require("../assets/logo.jpg")} style={styles.logo} />
+      <Image source={require('../assets/logo.jpg')} style={styles.logo} />
       <Text style={styles.tagLine}>Listen to the Web..</Text>
       <View style={styles.inputContainer}>
         <InputComponent
@@ -86,7 +82,7 @@ export const SignupScreen = ({ navigation }) => {
         <View style={styles.button}>
           <Button
             title="Signup"
-            disabled = {!emailIsValid}
+            disabled={!emailIsValid}
             onPress={() => signupWithEmail()}
             color={Colors.secondary}
           />
@@ -94,23 +90,22 @@ export const SignupScreen = ({ navigation }) => {
         <View
           style={{
             marginVertical: 10,
-            flexDirection: "row",
-            justifyContent: "space-between",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             paddingHorizontal: 20,
-          }}
-        >
+          }}>
           <TouchableOpacity onPress={() => {}}>
-            <Text style={{ color: Colors.danger }}>Forgot Password</Text>
+            <Text style={{color: Colors.danger}}>Forgot Password</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text style={{ color: Colors.primary }}>Log In</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{color: Colors.primary}}>Log In</Text>
           </TouchableOpacity>
         </View>
         <Divider text="or" />
         <View style={styles.button}>
           <Button
             title="Signup with Google"
-            onPress={()=>{}}
+            onPress={() => {}}
             color={Colors.danger}
           />
         </View>
@@ -126,12 +121,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginVertical: 10,
-    width: "100%",
+    width: '100%',
   },
   screen: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     backgroundColor: Colors.background,
   },
   logo: {
@@ -144,7 +139,6 @@ const styles = StyleSheet.create({
   },
   tagLine: {
     fontSize: 20,
-    fontWeight: "400",
+    fontWeight: '400',
   },
 });
-

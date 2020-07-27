@@ -1,33 +1,30 @@
-import "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
-import { StyleSheet, SafeAreaView, Button } from "react-native";
+import 'react-native-gesture-handler';
+import React from 'react';
+import {StyleSheet, SafeAreaView} from 'react-native';
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
+import {createStackNavigator} from '@react-navigation/stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {NavigationContainer} from '@react-navigation/native';
 
-import Colors from "./constants/color-palete";
-import { Feather } from "@expo/vector-icons";
-import { ProfileScreen } from "./screens/ProfileScreen";
-import { DashboardScreen } from "./screens/DashboardScreen";
-import { LoginScreen } from "./screens/LoginScreen";
+import Colors from './constants/color-palete';
+import {Feather} from '@expo/vector-icons';
+import {ProfileScreen} from './screens/ProfileScreen';
+import {DashboardScreen} from './screens/DashboardScreen';
+import {LoginScreen} from './screens/LoginScreen';
 
-import * as firebase from "firebase";
-import { firebaseConfig } from "./fireBase/fireBaseConfig";
-import { SignupScreen } from "./screens/SignupScreen";
-import { PlaylistScreen } from "./screens/PlaylistScreen";
+import {SignupScreen} from './screens/SignupScreen';
+import {PlaylistScreen} from './screens/PlaylistScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const LoginstackNavigator = ({ navigation }) => (
+const LoginstackNavigator = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Login"
       component={LoginScreen}
       options={{
-        title: "Login",
+        title: 'Login',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
         headerLeft: () => (
@@ -45,7 +42,7 @@ const LoginstackNavigator = ({ navigation }) => (
       name="Signup"
       component={SignupScreen}
       options={{
-        title: "Sign up",
+        title: 'Sign up',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
         headerLeft: () => (
@@ -62,13 +59,13 @@ const LoginstackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const DashboardstackNavigator = ({ navigation }) => (
+const DashboardstackNavigator = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Dashboard"
       component={DashboardScreen}
       options={{
-        title: "Dashboard",
+        title: 'Dashboard',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
         headerLeft: () => (
@@ -85,13 +82,13 @@ const DashboardstackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const ProfilestackNavigator = ({ navigation }) => (
+const ProfilestackNavigator = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Profile"
       component={ProfileScreen}
       options={{
-        title: "Profile",
+        title: 'Profile',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
         headerLeft: () => (
@@ -108,13 +105,13 @@ const ProfilestackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const PlayListstackNavigator = ({ navigation }) => (
+const PlayListstackNavigator = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Playlist"
       component={PlaylistScreen}
       options={{
-        title: "Playlist",
+        title: 'Playlist',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
         headerLeft: () => (
@@ -133,31 +130,18 @@ const PlayListstackNavigator = ({ navigation }) => (
 
 const DrawerTabs = () => (
   <Drawer.Navigator>
-    <Drawer.Screen
-      name="Dashboard"
-      component={DashboardstackNavigator}
-    ></Drawer.Screen>
+    <Drawer.Screen name="Dashboard" component={DashboardstackNavigator} />
     <Drawer.Screen name="Login" component={LoginstackNavigator} />
-    <Drawer.Screen
-      name="Profile"
-      component={ProfilestackNavigator}
-    ></Drawer.Screen>
-    <Drawer.Screen
-      name="Playlist"
-      component={PlayListstackNavigator}
-    ></Drawer.Screen>
+    <Drawer.Screen name="Profile" component={ProfilestackNavigator} />
+    <Drawer.Screen name="Playlist" component={PlayListstackNavigator} />
   </Drawer.Navigator>
 );
 
 export default function App() {
-  useEffect(() => {
-    firebase.initializeApp(firebaseConfig);
-  }, []);
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
         <DrawerTabs />
-        <StatusBar style="auto" />
       </SafeAreaView>
     </NavigationContainer>
   );

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "615406537334",
+    "firebase_url": "https://audiogramreactnative.firebaseio.com",
+    "project_id": "audiogramreactnative",
+    "storage_bucket": "audiogramreactnative.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615406537334:android:b7507ad185243252beed57",
+        "android_client_info": {
+          "package_name": "com.audiogram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615406537334-kb6skchi7t9ejmcq7qpmimg8h7ksomu8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.audiogram",
+            "certificate_hash": "5f9605e9a189484fdc51870d180c0176755cbe99"
+          }
+        },
+        {
+          "client_id": "615406537334-6ntdcev3jvupfh4akemu9f9um1olo5ct.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-fSETCL-wtYRWFYuWvfn4LbHj7wHk4cM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615406537334-6ntdcev3jvupfh4akemu9f9um1olo5ct.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
