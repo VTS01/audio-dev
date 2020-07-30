@@ -5,13 +5,17 @@ import {
   StyleSheet,
   Button,
   TouchableNativeFeedback,
+  Alert,
 } from 'react-native';
 
 import DocumentPicker from 'react-native-document-picker';
 
 import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+
 
 import {CategoryList} from '../Data/CategoriesList';
+import {CategoriesMap} from '../Data/CategoriesMap'
 import {AvailableLanguageList} from '../Data/AvailableLanguageList';
 import Colors from '../constants/color-palete';
 import {DropDown} from './DropDown';
@@ -21,7 +25,6 @@ export const FileInput = (props) => {
   const [fileName, setFileName] = useState('File');
   const [category, setCategory] = useState('Category');
   const [language, setLanguage] = useState('Language');
-  const [canSubmit, setCanSubmit] = useState(false);
   const [showCategoryDropDown, setShowCategoryDropDown] = useState(false);
   const [showLanguageDropDown, setShowLanguageDropDown] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -35,26 +38,21 @@ export const FileInput = (props) => {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.audio],
       });
-      const _fileName = result.type === 'cancel' ? 'File' : result.name;
+      const _fileName = result.name;
       handleFileNameChange(_fileName);
-      if (result.type === 'success') {
         setFileURI(result.uri);
-      }
-      setCanSubmit(
-        fileName !== 'File' &&
-          category !== 'Category' &&
-          language !== 'Language',
-      );
     } catch (err) {
+      if(DocumentPicker.isCancel(err))
+      {
+        setFileURI('');
+        handleFileNameChange('File')
+      }
       console.error(err);
     }
   };
 
   const handleCategoryChange = (categoryName: string) => {
     setCategory(categoryName);
-    setCanSubmit(
-      fileName !== 'File' && category !== 'Category' && language !== 'Language',
-    );
     handleShowCategoryDropDown();
   };
 
@@ -62,12 +60,9 @@ export const FileInput = (props) => {
     setShowCategoryDropDown(!showCategoryDropDown);
   };
 
-  const handleLanguageChange = (language: string) => {
-    setLanguage(language);
+  const handleLanguageChange = (_language: string) => {
+    setLanguage(_language);
     handleShowLanguageDropDown();
-    setCanSubmit(
-      fileName !== 'File' && category !== 'Category' && language !== 'Language',
-    );
   };
 
   const handleShowLanguageDropDown = () => {
@@ -84,7 +79,20 @@ export const FileInput = (props) => {
       console.log(_progress);
       setProgress(_progress);
     });
-    setCanSubmit(false);
+
+    const downloadUrl = await ref.getDownloadURL()
+    const imageUrl = downloadUrl.toString()
+
+    const collRef =  firestore().collection("mello/audio/languages/english/art-and-culture")
+    try{
+      const snapShot = await collRef.add({
+        name : "Name",
+        url : imageUrl
+      })
+      console.log("Document added with ID: ",snapShot.id);
+    }catch(err){
+      console.error(err)
+    }
     setFileURI('');
     setFileName('File');
   };
@@ -93,7 +101,6 @@ export const FileInput = (props) => {
     setFileName('File');
     setCategory('Category');
     setLanguage('Language');
-    setCanSubmit(false);
     props.setShowModal(false);
   };
 
@@ -153,7 +160,7 @@ export const FileInput = (props) => {
             title="Upload"
             onPress={handleSubmit}
             color={Colors.primary}
-            disabled={!canSubmit}
+            disabled={!(fileName !== 'File' && category !== 'Category' &&language !== 'Language')}
           />
           <Button title="cancel" onPress={handleCancel} color={Colors.danger} />
         </View>
