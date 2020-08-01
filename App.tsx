@@ -7,10 +7,11 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 
 import Colors from './constants/color-palete';
-import {Feather} from '@expo/vector-icons';
+// import {Feather} from '@expo/vector-icons';
 import {ProfileScreen} from './screens/ProfileScreen';
 import {DashboardScreen} from './screens/DashboardScreen';
 import {LoginScreen} from './screens/LoginScreen';
+import Feather from 'react-native-vector-icons/Feather'
 
 import {SignupScreen} from './screens/SignupScreen';
 import {PlaylistScreen} from './screens/PlaylistScreen';
