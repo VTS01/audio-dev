@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Button,
   TouchableNativeFeedback,
-  Alert,
 } from 'react-native';
 
 import DocumentPicker from 'react-native-document-picker';
@@ -13,9 +12,7 @@ import DocumentPicker from 'react-native-document-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 
-
 import {CategoryList} from '../Data/CategoriesList';
-import {CategoriesMap} from '../Data/CategoriesMap'
 import {AvailableLanguageList} from '../Data/AvailableLanguageList';
 import Colors from '../constants/color-palete';
 import {DropDown} from './DropDown';
@@ -27,7 +24,6 @@ export const FileInput = (props) => {
   const [language, setLanguage] = useState('Language');
   const [showCategoryDropDown, setShowCategoryDropDown] = useState(false);
   const [showLanguageDropDown, setShowLanguageDropDown] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const handleFileNameChange = (_fileName: string) => {
     setFileName(_fileName);
@@ -40,12 +36,11 @@ export const FileInput = (props) => {
       });
       const _fileName = result.name;
       handleFileNameChange(_fileName);
-        setFileURI(result.uri);
+      setFileURI(result.uri);
     } catch (err) {
-      if(DocumentPicker.isCancel(err))
-      {
+      if (DocumentPicker.isCancel(err)) {
         setFileURI('');
-        handleFileNameChange('File')
+        handleFileNameChange('File');
       }
       console.error(err);
     }
@@ -70,28 +65,40 @@ export const FileInput = (props) => {
   };
 
   const handleSubmit = async () => {
+    // props.setShowModal(false);
     const file = await fetch(fileURI);
     const blob = await file.blob();
     const ref = storage().ref(`audio/${language}/${category}/${fileName}`);
+<<<<<<< Updated upstream
     const uploadTask = await ref.put(blob);
     // uploadTask.on('state_changed', (snapshot) => {
     //   const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     //   console.log(_progress);
     //   setProgress(_progress);
     // });
+=======
+    const uploadTask = ref.put(blob);
+    uploadTask.on('state_changed', (snapshot) => {
+      const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('******* Progress: ', _progress);
+      props.updateProgress(_progress);
+    });
+>>>>>>> Stashed changes
 
-    const downloadUrl = await ref.getDownloadURL()
-    const imageUrl = downloadUrl.toString()
+    const downloadUrl = await ref.getDownloadURL();
+    const imageUrl = downloadUrl.toString();
 
-    const collRef =  firestore().collection("mello/audio/languages/english/art-and-culture")
-    try{
+    const collRef = firestore().collection(
+      'mello/audio/languages/english/art-and-culture',
+    );
+    try {
       const snapShot = await collRef.add({
-        name : "Name",
-        url : imageUrl
-      })
-      console.log("Document added with ID: ",snapShot.id);
-    }catch(err){
-      console.error(err)
+        name: 'Name',
+        url: imageUrl,
+      });
+      console.log('Document added with ID: ', snapShot.id);
+    } catch (err) {
+      console.error(err);
     }
     setFileURI('');
     setFileName('File');
@@ -160,7 +167,13 @@ export const FileInput = (props) => {
             title="Upload"
             onPress={handleSubmit}
             color={Colors.primary}
-            disabled={!(fileName !== 'File' && category !== 'Category' &&language !== 'Language')}
+            disabled={
+              !(
+                fileName !== 'File' &&
+                category !== 'Category' &&
+                language !== 'Language'
+              )
+            }
           />
           <Button title="cancel" onPress={handleCancel} color={Colors.danger} />
         </View>
