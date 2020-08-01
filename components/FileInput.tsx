@@ -24,6 +24,7 @@ export const FileInput = (props) => {
   const [fileURI, setFileURI] = useState('');
   const [fileName, setFileName] = useState('File');
   const [category, setCategory] = useState('Category');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0)
   const [language, setLanguage] = useState('Language');
   const [showCategoryDropDown, setShowCategoryDropDown] = useState(false);
   const [showLanguageDropDown, setShowLanguageDropDown] = useState(false);
@@ -51,8 +52,9 @@ export const FileInput = (props) => {
     }
   };
 
-  const handleCategoryChange = (categoryName: string) => {
+  const handleCategoryChange = (categoryName: string, categoryId : number) => {
     setCategory(categoryName);
+    setSelectedCategoryId(categoryId)
     handleShowCategoryDropDown();
   };
 
@@ -70,31 +72,36 @@ export const FileInput = (props) => {
   };
 
   const handleSubmit = async () => {
+    const selectedLanguage = language.toLowerCase()
+    const selectedCategory = CategoriesMap[selectedCategoryId]
+
     const file = await fetch(fileURI);
     const blob = await file.blob();
-    const ref = storage().ref(`audio/${language}/${category}/${fileName}`);
-    const uploadTask = ref.put(blob);
-    uploadTask.on('state_changed', (snapshot) => {
-      const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log(_progress);
-      setProgress(_progress);
-    });
+    const ref = storage().ref(`audio/${selectedLanguage}/${selectedCategory}/${fileName}`);
+    const uploadTask = await ref.put(blob);
+    // uploadTask.on('state_changed', (snapshot) => {
+    //   const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //   console.log(_progress);
+    //   setProgress(_progress);
+    // });
 
     const downloadUrl = await ref.getDownloadURL()
     const imageUrl = downloadUrl.toString()
 
-    const collRef =  firestore().collection("mello/audio/languages/english/art-and-culture")
+    const collRef =  firestore().collection(`mello/audio/languages/${selectedLanguage}/${selectedCategory}`)
     try{
       const snapShot = await collRef.add({
         name : "Name",
         url : imageUrl
       })
-      console.log("Document added with ID: ",snapShot.id);
+      setFileURI('');
+      setFileName('File');
+      props.setShowModal(false);
     }catch(err){
       console.error(err)
     }
-    setFileURI('');
-    setFileName('File');
+
+
   };
 
   const handleCancel = () => {

@@ -72,7 +72,7 @@ export const LoginScreen = ({navigation}) => {
 
   return (
     <View style={styles.screen}>
-      <Image source={require('../assets/logo.jpg')} style={styles.logo} />
+      <Image source={require('../assets/logo1.jpg')} style={styles.logo} />
       <Text style={styles.tagLine}>Listen to the Web..</Text>
       <View style={styles.inputContainer}>
         <InputComponent

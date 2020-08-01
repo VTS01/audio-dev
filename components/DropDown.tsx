@@ -9,11 +9,11 @@ export const DropDown = ({data,setSelectedItem,label})=>{
             </View>
             <ScrollView>
             {
-                data.map(item=>{
+                data.map(item =>{
                     return(
                         <TouchableNativeFeedback 
                             key={item.id} 
-                            onPress={()=>setSelectedItem(item.type)}>
+                            onPress={()=>setSelectedItem(item.type,item.id)}>
                                 <View  style={styles.dropdownListItem}>
                                     <Text style={styles.dropdownListItemText}>{item.type}</Text>
                                 </View>

@@ -1,23 +1,70 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React,{useCallback,useState,useEffect} from "react";
+
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { AntDesign } from "@expo/vector-icons";
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import firestore from '@react-native-firebase/firestore';
+
 import Colors from "../../constants/color-palete";
 import { Card } from "../Card";
+import {CategoriesMap} from '../../Data/CategoriesMap'
 
-export const Catagory = (props) => {
+export const Catagory = ({catagory, id, imageSource}) => {
+  const [dbData,setDbData] = useState<{}[]>()
+
+  const category = catagory;
+  const categoryId = id;
+  const categoryDbMap = CategoriesMap[categoryId]
+
+  const handleDataChange = (data:{}[])=>{
+    setDbData(data)
+  }
+
+  const fetchData = useCallback(async()=>{
+    const data:{}[] = []
+    const collRef = firestore().collection(`mello/audio/languages/english/${categoryDbMap}`)
+    try{
+      const snapShot = await collRef.get()
+      snapShot.forEach(snap=>{
+        if(snap.exists){
+          data.push({
+              key : snap.id,
+              name : snap.data().name,
+              url : snap.data().url
+            })
+        }
+        else{
+          Alert.alert(
+            'Err'
+          )
+          console.log("Document not found")
+        }
+      })
+      }
+    catch(err){
+      console.error(err)
+    }
+     handleDataChange(data)
+    }
+  ,[])
+
+  useEffect(() =>{
+    fetchData()
+  },[fetchData])
+
+
   return (
     <View style={styles.catagory}>
-      <Text style={styles.catagoryTitle}>{props.catagory}</Text>
+      <Text style={styles.catagoryTitle}>{category}</Text>
       <FlatList
-        data={props.data}
+        data={dbData}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <Card item={item}>
             <View style={styles.item}>
               <Image
-                source={props.imageSource}
-                style={{ height: 130, width: 130 }}
+                source={imageSource}
+                style={{ height: 115, width: 115 }}
               ></Image>
               <AntDesign
                 name="playcircleo"
@@ -38,11 +85,10 @@ export const Catagory = (props) => {
 const styles = StyleSheet.create({
   catagory:{
     width : '100%',
-    height: '15%',
-    // borderWidth : 1
   },
   contentContainer: {
     backgroundColor: Colors.background,
+  
   },
   catagoryTitle: {
     paddingHorizontal: 10,
@@ -50,6 +96,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     backgroundColor: Colors.background,
+    
   },
   item: {
     flexDirection: "row",
