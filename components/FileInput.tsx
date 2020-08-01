@@ -73,12 +73,12 @@ export const FileInput = (props) => {
     const file = await fetch(fileURI);
     const blob = await file.blob();
     const ref = storage().ref(`audio/${language}/${category}/${fileName}`);
-    const uploadTask = ref.put(blob);
-    uploadTask.on('state_changed', (snapshot) => {
-      const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log(_progress);
-      setProgress(_progress);
-    });
+    const uploadTask = await ref.put(blob);
+    // uploadTask.on('state_changed', (snapshot) => {
+    //   const _progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //   console.log(_progress);
+    //   setProgress(_progress);
+    // });
 
     const downloadUrl = await ref.getDownloadURL()
     const imageUrl = downloadUrl.toString()
