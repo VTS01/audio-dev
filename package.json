@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/google-signin": "^4.0.3",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/progress-bar-android": "^1.0.3",
     "@react-native-firebase/app": "^8.2.0",
     "@react-native-firebase/auth": "^8.2.0",
     "@react-native-firebase/firestore": "^7.4.3",
@@ -20,6 +21,7 @@
     "@react-navigation/native": "^5.7.1",
     "@react-navigation/stack": "^5.7.1",
     "@types/react-native-vector-icons": "^6.4.5",
+    "dot-prop": "^5.2.0",
     "expo": "^38.0.8",
     "npm": "^6.14.7",
     "react": "16.13.1",
@@ -29,6 +31,8 @@
     "react-native-reanimated": "^1.10.1",
     "react-native-safe-area-context": "^3.1.1",
     "react-native-screens": "^2.9.0",
+    "react-native-swift": "^1.2.3",
+    "react-native-track-player": "^1.2.3",
     "react-native-vector-icons": "^7.0.0"
   },
   "devDependencies": {

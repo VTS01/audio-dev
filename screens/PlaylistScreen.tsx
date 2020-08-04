@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+
+import { StyleSheet} from "react-native";
 import { Catagory } from "../components/catagories/Catagory";
 import { ScrollView } from "react-native-gesture-handler";
 

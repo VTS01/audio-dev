@@ -4,9 +4,15 @@ import Colors from "../constants/color-palete";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const Card = (props) => {
+  
+  const handleCardPress = ()=>{
+    props.setSelectedTrack(props.item)
+    props.setShowModal(true)
+  }
+
   return (
     <TouchableOpacity
-      onPress={() => console.log(props.item)}
+      onPress={handleCardPress}
       style={{ ...styles.card, ...props.style }}
     >
       {props.children}

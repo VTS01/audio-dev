@@ -1,6 +1,6 @@
 import React,{useCallback,useState,useEffect} from "react";
 
-import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, Image, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import firestore from '@react-native-firebase/firestore';
@@ -8,9 +8,12 @@ import firestore from '@react-native-firebase/firestore';
 import Colors from "../../constants/color-palete";
 import { Card } from "../Card";
 import {CategoriesMap} from '../../Data/CategoriesMap'
+import {AudioPlayer} from '../AudioPlayer'
 
 export const Catagory = ({catagory, id, imageSource}) => {
   const [dbData,setDbData] = useState<{}[]>()
+  const [showModal, setShowModal] = useState(false)
+  const [selectedTrack,setSelectedTrack] = useState()
 
   const category = catagory;
   const categoryId = id;
@@ -52,7 +55,6 @@ export const Catagory = ({catagory, id, imageSource}) => {
     fetchData()
   },[fetchData])
 
-
   return (
     <View style={styles.catagory}>
       <Text style={styles.catagoryTitle}>{category}</Text>
@@ -60,7 +62,11 @@ export const Catagory = ({catagory, id, imageSource}) => {
         data={dbData}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <Card item={item}>
+          <Card 
+            item={item}
+            setShowModal = {setShowModal}
+            setSelectedTrack = {setSelectedTrack}
+            >
             <View style={styles.item}>
               <Image
                 source={imageSource}
@@ -78,6 +84,15 @@ export const Catagory = ({catagory, id, imageSource}) => {
         horizontal={true}
         style={styles.contentContainer}
       ></FlatList>
+      <Modal
+        visible={showModal}
+        animationType="slide"
+      >
+        <AudioPlayer
+          setShowModal = {setShowModal}
+          track = {selectedTrack}
+        />
+      </Modal>
     </View>
   );
 };
