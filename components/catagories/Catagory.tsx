@@ -14,6 +14,7 @@ export const Catagory = ({catagory, id, imageSource}) => {
   const [dbData,setDbData] = useState<{}[]>()
   const [showModal, setShowModal] = useState(false)
   const [selectedTrack,setSelectedTrack] = useState()
+  const [showSpinner,setShowSpinner] = useState(false)
 
   const category = catagory;
   const categoryId = id;
@@ -32,8 +33,12 @@ export const Catagory = ({catagory, id, imageSource}) => {
         if(snap.exists){
           data.push({
               key : snap.id,
-              name : snap.data().name,
-              url : snap.data().url
+              id : snap.id,
+              url : snap.data().url,
+              title : 'Track Title',
+              artist : 'Track Artist',
+              artwork : snap.data().imageCover,
+              duration : 30,
             })
         }
         else{
@@ -48,12 +53,20 @@ export const Catagory = ({catagory, id, imageSource}) => {
       console.error(err)
     }
      handleDataChange(data)
+     setShowSpinner(false)
     }
   ,[])
 
   useEffect(() =>{
+    setShowSpinner(true)
     fetchData()
   },[fetchData])
+
+  if(showSpinner){
+    return(
+      <ActivityIndicator />
+    )
+  }
 
   return (
     <View style={styles.catagory}>
@@ -69,7 +82,7 @@ export const Catagory = ({catagory, id, imageSource}) => {
             >
             <View style={styles.item}>
               <Image
-                source={imageSource}
+                source={{uri : item.artwork}}
                 style={{ height: 115, width: 115 }}
               ></Image>
               <AntDesign
@@ -100,6 +113,7 @@ export const Catagory = ({catagory, id, imageSource}) => {
 const styles = StyleSheet.create({
   catagory:{
     width : '100%',
+    height : '10%',
   },
   contentContainer: {
     backgroundColor: Colors.background,

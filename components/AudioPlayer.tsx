@@ -1,34 +1,63 @@
 import React,{useState,useEffect,useCallback} from 'react'
 
-import {View, Text, StyleSheet, Image, TouchableNativeFeedback,TouchableWithoutFeedback,Alert} from 'react-native'
+import {View, Text, StyleSheet, Image ,TouchableWithoutFeedback,Alert} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 
 import TrackPlayer from 'react-native-track-player';
 
+class MyPlayerBar extends TrackPlayer.ProgressComponent {
+    render() {
+        return (
+            <View style={styles.progressBarContainer}>
+                <Text>0:{this.state.position.toFixed()}</Text>
+                <View style={styles.progressBar}>
+                    <ProgressBar
+                        color="red"
+                        styleAttr="Horizontal"
+                        indeterminate={false}
+                        progress={this.getProgress()}
+                    />
+                </View>
+                <Text>{this.state.duration - this.state.duration%60}:{this.state.duration%60}</Text>
+            </View>
+        );
+    }
+    
+}
+
 export const AudioPlayer = ({track,setShowModal})=>{
     const [trackPlayerLoaded,setTrackPlayerLoaded] = useState(false)
     const [isPlaying,setIsPlaying] = useState(false)
-    const [progress,setProgress] = useState(0)
+    const [progress,setProgress] = useState(.2)
     const [duration,setDuration] = useState(0)
+    const [currentTrack,setCurrentTrack] = useState<{}>()
     
     const start =useCallback(async () => {
-        await TrackPlayer.setupPlayer();
+        try{
+            await TrackPlayer.setupPlayer();
+            setTrackPlayerLoaded(true)
+        }catch(err){
+            Alert.alert(
+                'SET PLAYER',
+                `${err.message}`)
+        }
 
-        await TrackPlayer.add({
-            id: track.key,
-            url: track.url,
-            title: 'Track Title',
-            artist: 'Track Artist',
-            artwork: require('../assets/logo.jpg'),
-            duration : 24,
-        });
+        try{
+            await TrackPlayer.add(track);
+        }catch(err){
+            Alert.alert(
+                'Add Track',
+                `${err.message}`
+                )
+        }
 
         const duration = await TrackPlayer.getDuration()
         setDuration(duration)
 
         setIsPlaying(true)
         await TrackPlayer.play();
+
     },[track]);
 
     useEffect(()=>{
@@ -60,6 +89,32 @@ export const AudioPlayer = ({track,setShowModal})=>{
         TrackPlayer.seekTo(currentPosition + 10)
     }
 
+    const nextTrackHandler = async ()=>{
+        try{
+            await TrackPlayer.skipToNext()
+            const currTrackId = await TrackPlayer.getCurrentTrack()
+            const currTrackObj = await TrackPlayer.getTrack(currTrackId)
+            setCurrentTrack(currTrackObj)
+        }
+        catch(err){
+            Alert.alert(`${err.message}`)
+        }
+    }
+
+    const previousTrackHandler = async ()=>{
+        try{
+            await TrackPlayer.skipToPrevious()
+            const currTrackId = await TrackPlayer.getCurrentTrack()
+            const currTrackObj = await TrackPlayer.getTrack(currTrackId)
+            setCurrentTrack(currTrackObj)
+        }
+        catch(err){
+            Alert.alert(`${err.message}`)
+        }
+    }
+
+    // TrackPlayer.
+
     return(
         <View style={styles.screen}> 
             <View style={styles.header}>
@@ -72,7 +127,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
                         color = "black"
                     />
                 </TouchableWithoutFeedback>
-                <Text>PLAYING NOW</Text>
+                <Text style={styles.headerText}>PLAYING NOW</Text>
                 <AntDesign 
                     name="infocirlceo" 
                     size={24} 
@@ -82,22 +137,19 @@ export const AudioPlayer = ({track,setShowModal})=>{
             <View style={styles.controlSection}>
                 <View style={styles.trackCoverImageContainer}>
                     <Image
-                        source={require('../assets/logo.jpg')}
+                        source={{uri : track.artwork}}
                         style={styles.trackCoverImage}
                     ></Image>
                 </View>
-                <View style={styles.progressBarContainer}>
-                    <Text>0:00</Text>
-                    <ProgressBar
-                        styleAttr="Horizontal"
-                        indeterminate={false}
-                        progress={progress}
-                    />
-                    <Text>{(duration - duration%60)/60}:{(duration%60)}</Text>
+                <View style={styles.trackDetailsContainer}>
+                    <Text style={styles.trackTitle}>Title</Text>
+                    <Text style={styles.trackArtist}>Artist</Text>
                 </View>
+                <MyPlayerBar />
                 <View style={styles.controlButton}>
                     <TouchableWithoutFeedback
                         onLongPress={backwardHandler}
+                        onPress={previousTrackHandler}
                     >
                         <AntDesign 
                             name="banckward" 
@@ -118,6 +170,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback
                         onLongPress={forwardHandler}
+                        onPress={nextTrackHandler}
                     >
                         <AntDesign 
                             name="forward" 
@@ -145,19 +198,24 @@ const styles = StyleSheet.create({
         display : 'flex',
         flexDirection : 'row',
         justifyContent : 'space-between',
-        alignItems : 'center'
+        alignItems : 'center',
+    },
+    headerText:{
+        fontSize : 20,
+        fontWeight :'700',
+        color : 'black'
     },
     controlSection : {
         width : '90%',
-        height : '80%',
+        height : '85%',
         // borderWidth : 1,
         display : 'flex',
         justifyContent : 'space-around',
         alignItems : 'center'
     },
     trackCoverImageContainer:{
-        width : '50%',
-        height : '35%',
+        width : '55%',
+        height : '40%',
         borderRadius : 20,
         overflow : 'hidden',
         elevation : 5,
@@ -165,6 +223,7 @@ const styles = StyleSheet.create({
     trackCoverImage:{
         width : '100%',
         height : '100%',
+        // transform : 
     },
     controlButton:{
         width : '70%',
@@ -185,5 +244,24 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         alignItems : 'center',
         justifyContent : 'space-between'
+    },
+    trackDetailsContainer:{
+        width : '100%',
+        // borderWidth : 1,
+        display :'flex',
+        justifyContent : 'center',
+        alignItems : 'center'
+    },
+    trackTitle:{
+        fontSize : 25,
+        fontWeight : '700'
+    },
+    trackArtist:{
+        fontSize : 18,
+        fontWeight : '400',
+        color : '#bbb'
+    },
+    progressBar:{
+        width : '70%',
     }
 })

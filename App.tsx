@@ -131,10 +131,10 @@ const PlayListstackNavigator = ({navigation}) => (
 
 const DrawerTabs = () => (
   <Drawer.Navigator>
+    <Drawer.Screen name="Playlist" component={PlayListstackNavigator} />
     <Drawer.Screen name="Dashboard" component={DashboardstackNavigator} />
     <Drawer.Screen name="Login" component={LoginstackNavigator} />
     <Drawer.Screen name="Profile" component={ProfilestackNavigator} />
-    <Drawer.Screen name="Playlist" component={PlayListstackNavigator} />
   </Drawer.Navigator>
 );
 
