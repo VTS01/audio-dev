@@ -2,29 +2,9 @@ import React,{useState,useEffect,useCallback} from 'react'
 
 import {View, Text, StyleSheet, Image ,TouchableWithoutFeedback,Alert} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import {ProgressBar} from '@react-native-community/progress-bar-android';
-
 import TrackPlayer from 'react-native-track-player';
 
-class MyPlayerBar extends TrackPlayer.ProgressComponent {
-    render() {
-        return (
-            <View style={styles.progressBarContainer}>
-                <Text>0:{this.state.position.toFixed()}</Text>
-                <View style={styles.progressBar}>
-                    <ProgressBar
-                        color="red"
-                        styleAttr="Horizontal"
-                        indeterminate={false}
-                        progress={this.getProgress()}
-                    />
-                </View>
-                <Text>{this.state.duration - this.state.duration%60}:{this.state.duration%60}</Text>
-            </View>
-        );
-    }
-    
-}
+import {MusicProgressBar} from './AudioPlayerProgressBar'
 
 export const AudioPlayer = ({track,setShowModal})=>{
     const [trackPlayerLoaded,setTrackPlayerLoaded] = useState(false)
@@ -113,7 +93,9 @@ export const AudioPlayer = ({track,setShowModal})=>{
         }
     }
 
-    // TrackPlayer.
+    const sliderHandler = (value:number)=>{
+        TrackPlayer.seekTo(value)
+    }
 
     return(
         <View style={styles.screen}> 
@@ -137,7 +119,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
             <View style={styles.controlSection}>
                 <View style={styles.trackCoverImageContainer}>
                     <Image
-                        source={{uri : track.artwork}}
+                        source={require('../assets/logo.jpg')}
                         style={styles.trackCoverImage}
                     ></Image>
                 </View>
@@ -145,7 +127,9 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     <Text style={styles.trackTitle}>Title</Text>
                     <Text style={styles.trackArtist}>Artist</Text>
                 </View>
-                <MyPlayerBar />
+                <MusicProgressBar 
+                    sliderHandler={sliderHandler}
+                />
                 <View style={styles.controlButton}>
                     <TouchableWithoutFeedback
                         onLongPress={backwardHandler}
@@ -238,13 +222,6 @@ const styles = StyleSheet.create({
         justifyContent : 'center',
         alignItems : 'center'
     },
-    progressBarContainer:{
-        width : '80%',
-        display : 'flex',
-        flexDirection : 'row',
-        alignItems : 'center',
-        justifyContent : 'space-between'
-    },
     trackDetailsContainer:{
         width : '100%',
         // borderWidth : 1,
@@ -261,7 +238,4 @@ const styles = StyleSheet.create({
         fontWeight : '400',
         color : '#bbb'
     },
-    progressBar:{
-        width : '70%',
-    }
 })
