@@ -3,11 +3,18 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 
 import Slider from '@react-native-community/slider'
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer,{STATE_STOPPED} from 'react-native-track-player';
 
 export class MusicProgressBar extends TrackPlayer.ProgressComponent {
-    progress = parseInt(this.state.position.toFixed()) - parseInt(this.state.position.toFixed())%60 + ':'  + parseInt(this.state.position.toFixed())%60
+    
     render() {
+        const  {setIsPlaying,setIsStopped} = this.props
+        TrackPlayer.getState().then(function(state){
+            if(state === STATE_STOPPED){
+             setIsPlaying(false)
+             setIsStopped(true)
+            }
+        })
         return (
             <View style={styles.progressBarContainer}>
                 <Text>{parseInt(this.state.position.toFixed()) - parseInt(this.state.position.toFixed())%60 + ':'  + parseInt(this.state.position.toFixed())%60}</Text>

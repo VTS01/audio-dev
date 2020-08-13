@@ -10,7 +10,7 @@ import { Card } from "../Card";
 import {CategoriesMap} from '../../Data/CategoriesMap'
 import {AudioPlayer} from '../AudioPlayer'
 
-export const Catagory = ({catagory, id, imageSource}) => {
+export const Catagory = ({catagory, id}) => {
   const [dbData,setDbData] = useState<{}[]>()
   const [showModal, setShowModal] = useState(false)
   const [selectedTrack,setSelectedTrack] = useState()
@@ -53,7 +53,7 @@ export const Catagory = ({catagory, id, imageSource}) => {
       console.error(err)
     }
      handleDataChange(data)
-     setShowSpinner(false)
+    //  setShowSpinner(false)
     }
   ,[])
 
@@ -62,11 +62,11 @@ export const Catagory = ({catagory, id, imageSource}) => {
     fetchData()
   },[fetchData])
 
-  if(showSpinner){
-    return(
-      <ActivityIndicator />
-    )
-  }
+  // if(showSpinner){
+  //   return(
+  //     <ActivityIndicator color={Colors.menu}/>
+  //   )
+  // }
 
   return (
     <View style={styles.catagory}>
@@ -83,7 +83,7 @@ export const Catagory = ({catagory, id, imageSource}) => {
             <View style={styles.item}>
               <Image
                 source={{uri : item.artwork}}
-                style={{ height: 115, width: 115 }}
+                style={{ height: '100%', width: '100%' }}
               ></Image>
               <AntDesign
                 name="playcircleo"
@@ -113,7 +113,6 @@ export const Catagory = ({catagory, id, imageSource}) => {
 const styles = StyleSheet.create({
   catagory:{
     width : '100%',
-    height : '10%',
   },
   contentContainer: {
     backgroundColor: Colors.background,
@@ -128,6 +127,7 @@ const styles = StyleSheet.create({
     
   },
   item: {
+    flex:1,
     flexDirection: "row",
     alignItems: "flex-end",
   },

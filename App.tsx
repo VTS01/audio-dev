@@ -1,17 +1,14 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView,StatusBar} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 
 import Colors from './constants/color-palete';
-// import {Feather} from '@expo/vector-icons';
-import {ProfileScreen} from './screens/ProfileScreen';
-import {DashboardScreen} from './screens/DashboardScreen';
 import {LoginScreen} from './screens/LoginScreen';
-import Feather from 'react-native-vector-icons/Feather'
+// import Feather from 'react-native-vector-icons/Feather'
 
 import {SignupScreen} from './screens/SignupScreen';
 import {PlaylistScreen} from './screens/PlaylistScreen';
@@ -19,7 +16,7 @@ import {PlaylistScreen} from './screens/PlaylistScreen';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const LoginstackNavigator = ({navigation}) => (
+const LoginstackNavigator = () => (
   <Stack.Navigator>
     <Stack.Screen
       name="Login"
@@ -28,15 +25,6 @@ const LoginstackNavigator = ({navigation}) => (
         title: 'Login',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
-        headerLeft: () => (
-          <Feather
-            name="menu"
-            size={27}
-            color={Colors.headerText}
-            style={styles.menuIcon}
-            onPress={() => navigation.openDrawer()}
-          />
-        ),
       }}
     />
     <Stack.Screen
@@ -46,103 +34,33 @@ const LoginstackNavigator = ({navigation}) => (
         title: 'Sign up',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
-        headerLeft: () => (
-          <Feather
-            name="menu"
-            size={27}
-            color={Colors.headerText}
-            style={styles.menuIcon}
-            onPress={() => navigation.openDrawer()}
-          />
-        ),
       }}
     />
   </Stack.Navigator>
 );
 
-const DashboardstackNavigator = ({navigation}) => (
+const PlayListstackNavigator = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Dashboard"
-      component={DashboardScreen}
-      options={{
-        title: 'Dashboard',
-        headerStyle: styles.appHeader,
-        headerTintColor: Colors.headerText,
-        headerLeft: () => (
-          <Feather
-            name="menu"
-            size={27}
-            color={Colors.headerText}
-            style={styles.menuIcon}
-            onPress={() => navigation.openDrawer()}
-          />
-        ),
-      }}
-    />
-  </Stack.Navigator>
-);
-
-const ProfilestackNavigator = ({navigation}) => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        title: 'Profile',
-        headerStyle: styles.appHeader,
-        headerTintColor: Colors.headerText,
-        headerLeft: () => (
-          <Feather
-            name="menu"
-            size={27}
-            color={Colors.headerText}
-            style={styles.menuIcon}
-            onPress={() => navigation.openDrawer()}
-          />
-        ),
-      }}
-    />
-  </Stack.Navigator>
-);
-
-const PlayListstackNavigator = ({navigation}) => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="Playlist"
+      name="Mello"
       component={PlaylistScreen}
       options={{
-        title: 'Playlist',
+        title: 'Mello',
         headerStyle: styles.appHeader,
         headerTintColor: Colors.headerText,
-        headerLeft: () => (
-          <Feather
-            name="menu"
-            size={27}
-            color={Colors.headerText}
-            style={styles.menuIcon}
-            onPress={() => navigation.openDrawer()}
-          />
-        ),
       }}
     />
   </Stack.Navigator>
 );
 
-const DrawerTabs = () => (
-  <Drawer.Navigator>
-    <Drawer.Screen name="Playlist" component={PlayListstackNavigator} />
-    <Drawer.Screen name="Dashboard" component={DashboardstackNavigator} />
-    <Drawer.Screen name="Login" component={LoginstackNavigator} />
-    <Drawer.Screen name="Profile" component={ProfilestackNavigator} />
-  </Drawer.Navigator>
-);
+
 
 export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
-        <DrawerTabs />
+        <StatusBar backgroundColor={Colors.menu}/>
+        <PlayListstackNavigator/>
       </SafeAreaView>
     </NavigationContainer>
   );

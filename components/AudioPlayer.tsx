@@ -9,6 +9,7 @@ import {MusicProgressBar} from './AudioPlayerProgressBar'
 export const AudioPlayer = ({track,setShowModal})=>{
     const [trackPlayerLoaded,setTrackPlayerLoaded] = useState(false)
     const [isPlaying,setIsPlaying] = useState(false)
+    const [playerStopped,setIsStopped] = useState(true)
     const [progress,setProgress] = useState(.2)
     const [duration,setDuration] = useState(0)
     const [currentTrack,setCurrentTrack] = useState<{}>()
@@ -16,6 +17,37 @@ export const AudioPlayer = ({track,setShowModal})=>{
     const start =useCallback(async () => {
         try{
             await TrackPlayer.setupPlayer();
+            TrackPlayer.updateOptions({
+                stopWithApp: true,
+                capabilities: [
+                    TrackPlayer.CAPABILITY_PLAY,
+                    TrackPlayer.CAPABILITY_PAUSE,
+                    TrackPlayer.CAPABILITY_SEEK_TO,
+                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
+                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+                ],
+                compactCapabilities: [
+                    TrackPlayer.CAPABILITY_PLAY,
+                    TrackPlayer.CAPABILITY_PAUSE,
+                    TrackPlayer.CAPABILITY_SEEK_TO,
+                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
+                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+                ],
+                notificationCapabilities: [
+                    TrackPlayer.CAPABILITY_PLAY,
+                    TrackPlayer.CAPABILITY_PAUSE,
+                    TrackPlayer.CAPABILITY_SEEK_TO,
+                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
+                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+                ],
+                // jumpInterval: 15
+            });
             setTrackPlayerLoaded(true)
         }catch(err){
             Alert.alert(
@@ -37,6 +69,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
 
         setIsPlaying(true)
         await TrackPlayer.play();
+        setIsStopped(false)
 
     },[track]);
 
@@ -95,7 +128,44 @@ export const AudioPlayer = ({track,setShowModal})=>{
 
     const sliderHandler = (value:number)=>{
         TrackPlayer.seekTo(value)
+        // setIsPlaying(true)
     }
+
+    TrackPlayer.addEventListener('remote-play', () => {
+        Alert.alert('Hello play')
+        // handleTrackPlay()
+      });
+    
+      TrackPlayer.addEventListener('remote-pause', () => {
+        Alert.alert('Hello Moto1')  
+        // handleTrackPause()
+      });
+    
+      TrackPlayer.addEventListener('remote-jump-forward', async() => {
+        // forwardHandler()
+        Alert.alert('Hello seek jump-f')
+      });
+    
+      TrackPlayer.addEventListener('remote-jump-backward',async () => {
+        // backwardHandler()
+        Alert.alert('Hello seek jump-b')
+
+      });
+
+      TrackPlayer.addEventListener('remote-seek',async (pos)=>{
+        //   TrackPlayer.seekTo(pos)
+        Alert.alert(`${pos[0]}`,`${pos[1]}`)
+      })
+
+      TrackPlayer.addEventListener('remote-next',()=>{
+        //   TrackPlayer.seekTo(pos)
+        Alert.alert('next')
+      })
+
+      TrackPlayer.addEventListener('remote-previous',()=>{
+        //   TrackPlayer.seekTo(pos)
+        Alert.alert('back')
+      })
 
     return(
         <View style={styles.screen}> 
@@ -119,7 +189,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
             <View style={styles.controlSection}>
                 <View style={styles.trackCoverImageContainer}>
                     <Image
-                        source={require('../assets/logo.jpg')}
+                        source={require('../assets/logo1.jpg')}
                         style={styles.trackCoverImage}
                     ></Image>
                 </View>
@@ -129,6 +199,8 @@ export const AudioPlayer = ({track,setShowModal})=>{
                 </View>
                 <MusicProgressBar 
                     sliderHandler={sliderHandler}
+                    setIsPlaying = {setIsPlaying}
+                    setIsStopped = {setIsStopped}
                 />
                 <View style={styles.controlButton}>
                     <TouchableWithoutFeedback

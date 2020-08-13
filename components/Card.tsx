@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   card: {
     shadowColor: Colors.shadow,
     shadowOpacity: 0.1,
-    height: 230,
-    width: 130,
+    height: 145,
+    width: 145,
     margin: 10,
   },
 });
