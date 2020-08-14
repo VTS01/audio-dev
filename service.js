@@ -8,7 +8,6 @@ const serviceProvider = async()=>{
     
         TrackPlayer.addEventListener('remote-stop', () => TrackPlayer.destroy());
 
-        // TrackPlayer.addEventListener('remote-seek',(pos)=> TrackPlayer.seekTo(pos))
 }
 
 export default serviceProvider;

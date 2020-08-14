@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React,{useEffect} from 'react';
 import {StyleSheet, SafeAreaView,StatusBar} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
@@ -9,6 +9,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Colors from './constants/color-palete';
 import {LoginScreen} from './screens/LoginScreen';
 // import Feather from 'react-native-vector-icons/Feather'
+import SplashScreen from 'react-native-splash-screen'
 
 import {SignupScreen} from './screens/SignupScreen';
 import {PlaylistScreen} from './screens/PlaylistScreen';
@@ -56,6 +57,9 @@ const PlayListstackNavigator = () => (
 
 
 export default function App() {
+  useEffect(()=>{
+    SplashScreen.hide()
+  },[])
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>

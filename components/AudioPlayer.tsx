@@ -132,39 +132,32 @@ export const AudioPlayer = ({track,setShowModal})=>{
     }
 
     TrackPlayer.addEventListener('remote-play', () => {
-        Alert.alert('Hello play')
         // handleTrackPlay()
       });
     
       TrackPlayer.addEventListener('remote-pause', () => {
-        Alert.alert('Hello Moto1')  
         // handleTrackPause()
       });
     
       TrackPlayer.addEventListener('remote-jump-forward', async() => {
         // forwardHandler()
-        Alert.alert('Hello seek jump-f')
       });
     
       TrackPlayer.addEventListener('remote-jump-backward',async () => {
         // backwardHandler()
-        Alert.alert('Hello seek jump-b')
 
       });
 
       TrackPlayer.addEventListener('remote-seek',async (pos)=>{
         //   TrackPlayer.seekTo(pos)
-        Alert.alert(`${pos[0]}`,`${pos[1]}`)
       })
 
       TrackPlayer.addEventListener('remote-next',()=>{
         //   TrackPlayer.seekTo(pos)
-        Alert.alert('next')
       })
 
       TrackPlayer.addEventListener('remote-previous',()=>{
         //   TrackPlayer.seekTo(pos)
-        Alert.alert('back')
       })
 
     return(
