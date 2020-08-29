@@ -1,55 +1,78 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, Alert, Image } from "react-native";
-import Colors from "../constants/color-palete";
-import { InputComponent } from "../components/InputComponent";
-import { Divider } from "../components/Divider";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import firebase from "firebase";
+import React, {useState, useEffect} from 'react';
+import {View, Text, StyleSheet, Button, Alert, Image} from 'react-native';
+import Colors from '../constants/color-palete';
+import {InputComponent} from '../components/InputComponent';
+import {Divider} from '../components/Divider';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-export const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+  User,
+} from '@react-native-community/google-signin';
+import auth from '@react-native-firebase/auth';
 
-  const handleEmailChange = (email: string) => {
-    setEmail(email);
+export const LoginScreen = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState();
+
+  // Handle user state changes
+  const onAuthStateChanged = (_user) => {
+    setUser(user);
   };
 
-  const handlePasswordChange = (password: string) => {
-    setPassword(password);
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  GoogleSignin.configure({
+    webClientId:
+      '615406537334-kb6skchi7t9ejmcq7qpmimg8h7ksomu8.apps.googleusercontent.com',
+  });
+
+  const handleEmailChange = (_email: string) => {
+    setEmail(_email);
+  };
+  const handlePasswordChange = (_password: string) => {
+    setPassword(_password);
   };
 
   const loginWithEmail = () => {
-    firebase
-      .auth()
+    auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate("Dashboard");
+        navigation.navigate('Dashboard');
       })
       .catch(() => {
-        Alert.alert("User not exist", "Please sign up", [{ text: "Ok" }]);
+        Alert.alert('User not exist', 'Please sign up', [{text: 'Ok'}]);
       });
   };
 
-  const loginWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider().addScope(
-      "https://www.googleapis.com/auth/userinfo.profile"
-    );
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(console.log)
-      .catch(() =>
-        Alert.alert(
-          "Google Login Issue",
-          "Not able to login with Google authetication at the moment",
-          [{ text: "Sorry!" }]
-        )
-      );
+  const loginWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      setUser({userInfo});
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
   };
 
   return (
     <View style={styles.screen}>
-      <Image source={require("../assets/logo.jpg")} style={styles.logo} />
+      <Image source={require('../assets/logo1.jpg')} style={styles.logo} />
       <Text style={styles.tagLine}>Listen to the Web..</Text>
       <View style={styles.inputContainer}>
         <InputComponent
@@ -75,27 +98,21 @@ export const LoginScreen = ({ navigation }) => {
             color={Colors.secondary}
           />
         </View>
-        <View
-          style={{
-            marginVertical: 10,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 20,
-          }}
-        >
+        <View style={styles.forgetPasswordAndSignUp}>
           <TouchableOpacity onPress={() => {}}>
-            <Text style={{ color: Colors.danger }}>Forgot Password</Text>
+            <Text style={{color: Colors.danger}}>Forgot Password</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-            <Text style={{ color: Colors.primary }}>Sign Up</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={{color: Colors.primary}}>Sign Up</Text>
           </TouchableOpacity>
         </View>
         <Divider text="or" />
         <View style={styles.button}>
-          <Button
-            title="Login with Google"
+          <GoogleSigninButton
+            style={styles.googleButton}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
             onPress={loginWithGoogle}
-            color={Colors.danger}
           />
         </View>
       </View>
@@ -108,14 +125,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: 50,
   },
+  forgetPasswordAndSignUp: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
   inputContainer: {
     marginVertical: 10,
-    width: "100%",
+    width: '100%',
   },
+  googleButton: {width: 192, height: 48},
   screen: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     backgroundColor: Colors.background,
   },
   logo: {
@@ -128,6 +152,6 @@ const styles = StyleSheet.create({
   },
   tagLine: {
     fontSize: 20,
-    fontWeight: "400",
+    fontWeight: '400',
   },
 });
