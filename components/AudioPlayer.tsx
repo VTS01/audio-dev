@@ -187,8 +187,8 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     ></Image>
                 </View>
                 <View style={styles.trackDetailsContainer}>
-                    <Text style={styles.trackTitle}>Title</Text>
-                    <Text style={styles.trackArtist}>Artist</Text>
+                    <Text style={styles.trackTitle}>{track.title}</Text>
+                    <Text style={styles.trackArtist}>{track.artist}</Text>
                 </View>
                 <MusicProgressBar 
                     sliderHandler={sliderHandler}
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
         alignItems : 'center'
     },
     trackCoverImageContainer:{
-        width : '55%',
+        width : '65%',
         height : '40%',
         borderRadius : 20,
         overflow : 'hidden',

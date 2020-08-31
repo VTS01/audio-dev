@@ -26,18 +26,20 @@ export const Catagory = ({catagory, id}) => {
 
   const fetchData = useCallback(async()=>{
     const data:{}[] = []
-    const collRef = firestore().collection(`mello/audio/languages/english/${categoryDbMap}`)
+    // const collRef = firestore().collection(`mello/audio/languages/english/${categoryDbMap}`)
+    const collRef = firestore().collection(`mello/data/audios`)
+    const query = collRef.where("category","==",categoryDbMap).where("status","==","publish")
     try{
-      const snapShot = await collRef.get()
+      const snapShot = await query.get()
       snapShot.forEach(snap=>{
         if(snap.exists){
           data.push({
               key : snap.id,
               id : snap.id,
-              url : snap.data().url,
-              title : 'Track Title',
-              artist : 'Track Artist',
-              artwork : snap.data().imageCover,
+              url : snap.data().audiourl,
+              title : snap.data().name,
+              artist : snap.data().author.name,
+              artwork : snap.data().audiocoverurl,
               duration : 30,
             })
         }
