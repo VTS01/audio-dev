@@ -1,8 +1,9 @@
 import React,{useState,useEffect,useCallback} from 'react'
 
-import {View, Text, StyleSheet, Image ,TouchableWithoutFeedback,Alert} from 'react-native'
+import {View, Text, StyleSheet, Image ,TouchableWithoutFeedback,Alert,TouchableNativeFeedback} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import TrackPlayer from 'react-native-track-player';
+import TrackPlayerEvents  from 'react-native-track-player';
 
 import {MusicProgressBar} from './AudioPlayerProgressBar'
 
@@ -11,7 +12,6 @@ export const AudioPlayer = ({track,setShowModal})=>{
     const [isPlaying,setIsPlaying] = useState(false)
     const [playerStopped,setIsStopped] = useState(true)
     const [progress,setProgress] = useState(.2)
-    const [duration,setDuration] = useState(0)
     const [currentTrack,setCurrentTrack] = useState<{}>()
     
     const start =useCallback(async () => {
@@ -31,11 +31,8 @@ export const AudioPlayer = ({track,setShowModal})=>{
                 compactCapabilities: [
                     TrackPlayer.CAPABILITY_PLAY,
                     TrackPlayer.CAPABILITY_PAUSE,
-                    TrackPlayer.CAPABILITY_SEEK_TO,
                     TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
                     TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
-                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
                 ],
                 notificationCapabilities: [
                     TrackPlayer.CAPABILITY_PLAY,
@@ -46,7 +43,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     TrackPlayer.CAPABILITY_JUMP_FORWARD,
                     TrackPlayer.CAPABILITY_JUMP_BACKWARD,
                 ],
-                // jumpInterval: 15
+                jumpInterval: 10
             });
             setTrackPlayerLoaded(true)
         }catch(err){
@@ -64,9 +61,6 @@ export const AudioPlayer = ({track,setShowModal})=>{
                 )
         }
 
-        const duration = await TrackPlayer.getDuration()
-        setDuration(duration)
-
         setIsPlaying(true)
         await TrackPlayer.play();
         setIsStopped(false)
@@ -82,8 +76,8 @@ export const AudioPlayer = ({track,setShowModal})=>{
         setIsPlaying(false)
     }
 
-    const handleTrackPlay = ()=>{
-        TrackPlayer.play()
+    const handleTrackPlay = async ()=>{
+        await TrackPlayer.play()
         setIsPlaying(true)
     }
 
@@ -94,7 +88,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
 
     const backwardHandler = async()=>{
         const currentPosition = await TrackPlayer.getPosition()
-        TrackPlayer.seekTo(currentPosition -10)
+        TrackPlayer.seekTo(currentPosition - 10)
     }
 
     const forwardHandler = async()=>{
@@ -131,12 +125,18 @@ export const AudioPlayer = ({track,setShowModal})=>{
         // setIsPlaying(true)
     }
 
+    // TrackPlayer.addEventListener('STATE_PLAYING', () => {
+    //     // setIsPlaying(true)
+    //     // handleTrackPlay()
+    // });
+
     TrackPlayer.addEventListener('remote-play', () => {
-        // handleTrackPlay()
-      });
+        handleTrackPlay()
+        setIsPlaying(true)
+    });
     
       TrackPlayer.addEventListener('remote-pause', () => {
-        // handleTrackPause()
+        handleTrackPause()
       });
     
       TrackPlayer.addEventListener('remote-jump-forward', async() => {
@@ -163,15 +163,15 @@ export const AudioPlayer = ({track,setShowModal})=>{
     return(
         <View style={styles.screen}> 
             <View style={styles.header}>
-                <TouchableWithoutFeedback
+                <TouchableNativeFeedback
                     onPress={handleShowModel}
                 >
                     <AntDesign 
-                        name = "arrowleft"
+                        name = "down"
                         size = {24}
                         color = "black"
                     />
-                </TouchableWithoutFeedback>
+                </TouchableNativeFeedback>
                 <Text style={styles.headerText}>PLAYING NOW</Text>
                 <AntDesign 
                     name="infocirlceo" 
@@ -187,11 +187,11 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     ></Image>
                 </View>
                 <View style={styles.trackDetailsContainer}>
-                    <Text style={styles.trackTitle}>Title</Text>
-                    <Text style={styles.trackArtist}>Artist</Text>
+                <Text style={styles.trackTitle}>{track.title}</Text>
+                    <Text style={styles.trackArtist}>{track.artist}</Text>
                 </View>
                 <MusicProgressBar 
-                    sliderHandler={sliderHandler}
+                    sliderHandler = {sliderHandler}
                     setIsPlaying = {setIsPlaying}
                     setIsStopped = {setIsStopped}
                 />
@@ -201,12 +201,12 @@ export const AudioPlayer = ({track,setShowModal})=>{
                         onPress={previousTrackHandler}
                     >
                         <AntDesign 
-                            name="banckward" 
+                            name="fastbackward" 
                             size={20} 
                             color="black" 
                         />
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback
+                    <TouchableNativeFeedback
                         onPress={isPlaying ? handleTrackPause : handleTrackPlay}
                     >
                         <View style={styles.playButtonContainer}>
@@ -216,13 +216,13 @@ export const AudioPlayer = ({track,setShowModal})=>{
                                 color="black" 
                             />
                         </View>
-                    </TouchableWithoutFeedback>
+                    </TouchableNativeFeedback>
                     <TouchableWithoutFeedback
                         onLongPress={forwardHandler}
                         onPress={nextTrackHandler}
                     >
                         <AntDesign 
-                            name="forward" 
+                            name="fastforward" 
                             size={20} 
                             color="black" 
                         />
@@ -263,11 +263,12 @@ const styles = StyleSheet.create({
         alignItems : 'center'
     },
     trackCoverImageContainer:{
-        width : '55%',
-        height : '40%',
+        width : '70%',
+        height : '50%',
         borderRadius : 20,
         overflow : 'hidden',
         elevation : 5,
+        backgroundColor:'white'
     },
     trackCoverImage:{
         width : '100%',

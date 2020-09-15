@@ -1,78 +1,36 @@
 import React,{useCallback,useState,useEffect} from "react";
 
-import { View, Text, StyleSheet, Image, Alert, Modal, ActivityIndicator} from "react-native";
+import { View, Text, StyleSheet, Image, Alert, Modal} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import firestore from '@react-native-firebase/firestore';
 
+import {useSelector} from "react-redux"
 import Colors from "../../constants/color-palete";
 import { Card } from "../Card";
 import {CategoriesMap} from '../../Data/CategoriesMap'
 import {AudioPlayer} from '../AudioPlayer'
 
-export const Catagory = ({catagory, id}) => {
-  const [dbData,setDbData] = useState<{}[]>()
+export const Catagory = ({catagory, dbname}) => {
+  const audiosData = useSelector(state => state.audios.audios) 
   const [showModal, setShowModal] = useState(false)
   const [selectedTrack,setSelectedTrack] = useState()
-  const [showSpinner,setShowSpinner] = useState(false)
 
-  const category = catagory;
-  const categoryId = id;
-  const categoryDbMap = CategoriesMap[categoryId]
+  // const category = catagory;
+  // const categoryId = id;
+  // const categoryDbMap = CategoriesMap[categoryId]
 
-  const handleDataChange = (data:{}[])=>{
-    setDbData(data)
-  }
+  const audios = audiosData.filter((item: { category: string; }) => item.category === dbname && item.status === 'publish')
 
-  const fetchData = useCallback(async()=>{
-    const data:{}[] = []
-    const collRef = firestore().collection(`mello/audio/languages/english/${categoryDbMap}`)
-    try{
-      const snapShot = await collRef.get()
-      snapShot.forEach(snap=>{
-        if(snap.exists){
-          data.push({
-              key : snap.id,
-              id : snap.id,
-              url : snap.data().url,
-              title : 'Track Title',
-              artist : 'Track Artist',
-              artwork : snap.data().imageCover,
-              duration : 30,
-            })
-        }
-        else{
-          Alert.alert(
-            'Err'
-          )
-          console.log("Document not found")
-        }
-      })
-      }
-    catch(err){
-      console.error(err)
-    }
-     handleDataChange(data)
-    //  setShowSpinner(false)
-    }
-  ,[])
+  if(audios.length===0){
+    return null
+  }  
 
-  useEffect(() =>{
-    setShowSpinner(true)
-    fetchData()
-  },[fetchData])
-
-  // if(showSpinner){
-  //   return(
-  //     <ActivityIndicator color={Colors.menu}/>
-  //   )
-  // }
 
   return (
     <View style={styles.catagory}>
-      <Text style={styles.catagoryTitle}>{category}</Text>
+      <Text style={styles.catagoryTitle}>{catagory}</Text>
       <FlatList
-        data={dbData}
+        data={audios}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <Card 
@@ -113,18 +71,16 @@ export const Catagory = ({catagory, id}) => {
 const styles = StyleSheet.create({
   catagory:{
     width : '100%',
+    marginBottom : 10,
   },
   contentContainer: {
-    backgroundColor: Colors.background,
-  
   },
   catagoryTitle: {
     paddingHorizontal: 10,
     paddingTop: 10,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "500",
-    backgroundColor: Colors.background,
-    
+    textTransform:'capitalize'
   },
   item: {
     flex:1,
@@ -133,6 +89,7 @@ const styles = StyleSheet.create({
   },
   playButton: {
     right: 30,
+    bottom : 4,
     color: Colors.background,
   },
 });
