@@ -15,6 +15,7 @@ export class MusicProgressBar extends TrackPlayer.ProgressComponent {
              setIsStopped(true)
             }
         })
+        
         return (
             <View style={styles.progressBarContainer}>
                 <Text>{parseInt(this.state.position.toFixed()) - parseInt(this.state.position.toFixed())%60 + ':'  + parseInt(this.state.position.toFixed())%60}</Text>
