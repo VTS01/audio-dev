@@ -52,7 +52,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
                 `${err.message}`)
         }
 
-        try{
+        try{       
             await TrackPlayer.add(track);
         }catch(err){
             Alert.alert(
@@ -64,7 +64,6 @@ export const AudioPlayer = ({track,setShowModal})=>{
         setIsPlaying(true)
         await TrackPlayer.play();
         setIsStopped(false)
-
     },[track]);
 
     useEffect(()=>{
