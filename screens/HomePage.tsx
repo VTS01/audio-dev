@@ -3,18 +3,19 @@ import React,{useState,useEffect,useCallback} from "react";
 import firestore from '@react-native-firebase/firestore';
 import {View ,StyleSheet,Alert, ActivityIndicator,RefreshControl} from "react-native";
 import {useDispatch,useSelector} from "react-redux"
-import { ScrollView } from "react-native-gesture-handler";
 
 import { Catagory } from "../components/catagories/Catagory";
 import {setAudios} from  "../store/actions/audiosActions"
 import {setCategories} from "../store/actions/categoriesActions"
 import {setLanguages} from "../store/actions/languagesActions"
 import Colors from "../constants/color-palete"
+import {AudiosList} from "../components/AudiosList"
 
-export const PlaylistScreen = () => {
+export const HomePage = () => {
   const [showSpinner,setShowSpinner] = useState(false)
   const [isRefreshing,setIsRefreshing] = useState(false)
   const categories = useSelector(state => state.categories.categories)
+  const audios = useSelector(state => state.audios.audios)
 
   const dispatch = useDispatch()
 
@@ -43,7 +44,8 @@ export const PlaylistScreen = () => {
               artwork : snap.data().audiocoverurl,
               duration : snap.data().duration,
               category : snap.data().category,
-              status : snap.data().status
+              status : snap.data().status,
+              userAvatar : snap.data().author.avatar
             })
         }
         else{
@@ -112,29 +114,9 @@ export const PlaylistScreen = () => {
   }
 
   return (
-    <ScrollView 
-      style={styles.scrollViewContainer}
-      refreshControl={
-        <RefreshControl 
-          refreshing={isRefreshing}
-          onRefresh={fetchData}
-        />
-      }
-      >
-      <View style={styles.container}>
-        {
-          categories.map(({id,name,dbname})=>{
-            return(
-              <Catagory
-                catagory={name}
-                dbname={dbname}
-                key = {id}
-            />              
-            )
-          })
-        }
-      </View>
-    </ScrollView>
+    <AudiosList 
+      data={audios}
+    />
   );
 };
 
@@ -150,6 +132,7 @@ const styles = StyleSheet.create({
     flex:1,
     display:'flex',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    backgroundColor:'white'
   }
 });

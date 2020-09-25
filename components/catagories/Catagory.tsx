@@ -33,11 +33,7 @@ export const Catagory = ({catagory, dbname}) => {
         data={audios}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <Card 
-            item={item}
-            setShowModal = {setShowModal}
-            setSelectedTrack = {setSelectedTrack}
-            >
+          <Card>
             <View style={styles.item}>
               <Image
                 source={{uri : item.artwork}}
@@ -50,6 +46,7 @@ export const Catagory = ({catagory, dbname}) => {
                 style={styles.playButton}
               />
             </View>
+            <Text style={{color:'black'}}>Hello</Text>
           </Card>
         )}
         horizontal={true}

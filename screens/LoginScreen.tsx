@@ -1,42 +1,52 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Button, Alert, Image} from 'react-native';
-import Colors from '../constants/color-palete';
-import {InputComponent} from '../components/InputComponent';
-import {Divider} from '../components/Divider';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
+import {View, Text, StyleSheet, Button, Alert, Image,SafeAreaView} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useDispatch} from 'react-redux'
 import {
-  GoogleSignin,
+  // GoogleSignin,
   GoogleSigninButton,
   statusCodes,
   User,
+  GoogleSignin
 } from '@react-native-community/google-signin';
 import auth from '@react-native-firebase/auth';
+
+
+import Colors from '../constants/color-palete';
+import {InputComponent} from '../components/InputComponent';
+import {Divider} from '../components/Divider';
+import {setUser} from "../store/actions/userActions"
 
 export const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState();
 
+  const dispatch = useDispatch()
+  
   // Handle user state changes
   const onAuthStateChanged = (_user) => {
-    setUser(user);
+    if(_user){
+      const loggedUser = {
+        displayName:_user.displayName,
+        photoURL : _user.photoURL,
+        uid : _user.uid,
+        email:_user.email,
+        role:"listener"
+      }
+      dispatch(setUser(loggedUser))      
+    }
   };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  GoogleSignin.configure({
-    webClientId:
-      '615406537334-kb6skchi7t9ejmcq7qpmimg8h7ksomu8.apps.googleusercontent.com',
-  });
 
   const handleEmailChange = (_email: string) => {
     setEmail(_email);
   };
+
   const handlePasswordChange = (_password: string) => {
     setPassword(_password);
   };
@@ -44,36 +54,89 @@ export const LoginScreen = ({navigation}) => {
   const loginWithEmail = () => {
     auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        navigation.navigate('Dashboard');
+      .then((res) => {
+        const loggedUser = {
+          displayName:res.user.displayName,
+          photoURL : res.user.photoURL,
+          uid : res.user.uid,
+          email:res.user.email,
+          role:"listener"
+        }
+        dispatch(setUser(loggedUser))
       })
-      .catch(() => {
-        Alert.alert('User not exist', 'Please sign up', [{text: 'Ok'}]);
+      .catch((err) => {
+        const errMessage = err.message.slice(21,) 
+        Alert.alert(
+            'Error!!',
+            `${errMessage}`, 
+            [{
+              text: 'Ok'
+            }]
+        );
       });
   };
 
-  const loginWithGoogle = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      setUser({userInfo});
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
-    }
-  };
+  //**Not working**//
+
+  //  GoogleSignin.configure({
+  //     webClientId:'381110390220-g1h7j6gs982neo7ih271s963u4eh37li.apps.googleusercontent.com'
+  // });
+
+  //**Not working**//
+
+  const handleGoogleSignIn = async ()=>{
+    try{
+      // Get the users ID token
+    const { idToken } = await GoogleSignin.signIn();
+      // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      // Sign-in the user with the credential
+    const res = auth().signInWithCredential(googleCredential);
+    console.log(res);
+  }catch(err){
+    console.log(err); 
+  } 
+}
+
+  const handleFacebookSignIn = ()=>{
+
+  }
+
+  const handleForgotPassword = ()=>{
+
+  }
 
   return (
+    <SafeAreaView
+      style={{flex:1}}
+    >
     <View style={styles.screen}>
-      <Image source={require('../assets/logo1.jpg')} style={styles.logo} />
-      <Text style={styles.tagLine}>Listen to the Web..</Text>
+      <View style={styles.tagLineContainer}>
+        <Text style={styles.tagLine1}>Listeners, welcome to</Text>
+        <Text style={styles.tagLine2}>Mello!</Text>
+      </View>
+      <View style={styles.messageContainer}>
+        <Text style={styles.message1}>To gain knowledge listen meaningful audios here.</Text>
+        <Text style={styles.message2}>Smartly use your idle time, multitask or just listen when you don't have time to read.</Text>
+      </View>
+      <View style={styles.signInUsingContainer}>
+        <Text style={styles.signInUsing}>Sign in using</Text>
+      </View>
+      <View style={styles.authOptions}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={handleGoogleSignIn}
+        >
+          <Image  style={styles.googleIcon} source={require('../assets/google.png')}/>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleFacebookSignIn}
+          activeOpacity={0.5}
+        >
+          <Image style={styles.facebookIcon} source={require('../assets/facebook.png')}/>
+        </TouchableOpacity>
+      </View>
+      <Divider text="OR" />
       <View style={styles.inputContainer}>
         <InputComponent
           label="Email"
@@ -81,7 +144,7 @@ export const LoginScreen = ({navigation}) => {
           setValue={handleEmailChange}
           type="emailAddress"
           icon="mail"
-          placeholder="Enter Email Address"
+          placeholder="Email"
         />
         <InputComponent
           label="Password"
@@ -89,34 +152,26 @@ export const LoginScreen = ({navigation}) => {
           setValue={handlePasswordChange}
           type="password"
           icon="lock"
-          placeholder="Enter Password"
+          placeholder="Password"
         />
         <View style={styles.button}>
           <Button
-            title="Login"
+            title="Log in"
             onPress={() => loginWithEmail()}
             color={Colors.secondary}
           />
         </View>
         <View style={styles.forgetPasswordAndSignUp}>
           <TouchableOpacity onPress={() => {}}>
-            <Text style={{color: Colors.danger}}>Forgot Password</Text>
+            <Text style={{color: Colors.danger,textDecorationLine:'underline'}}>Forgot Password</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={{color: Colors.primary}}>Sign Up</Text>
+            <Text style={{color: Colors.primary,textDecorationLine:'underline'}}>Sign Up</Text>
           </TouchableOpacity>
-        </View>
-        <Divider text="or" />
-        <View style={styles.button}>
-          <GoogleSigninButton
-            style={styles.googleButton}
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={loginWithGoogle}
-          />
         </View>
       </View>
     </View>
+    </SafeAreaView>
   );
 };
 
@@ -132,7 +187,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   inputContainer: {
-    marginVertical: 10,
+    marginTop: 10,
+    marginBottom:20,
     width: '100%',
   },
   googleButton: {width: 192, height: 48},
@@ -140,7 +196,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: "white",
   },
   logo: {
     width: 100,
@@ -150,8 +206,54 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     borderRadius: 50,
   },
-  tagLine: {
-    fontSize: 20,
-    fontWeight: '400',
+  tagLineContainer:{
+    flexDirection:'row',
+    marginVertical:20,
+    alignItems:'flex-end'
   },
+  tagLine1: {
+    fontSize: 22,
+    marginRight: 5,
+    color:'green'
+  },
+  tagLine2: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color:'green'
+  },
+  messageContainer:{
+    paddingHorizontal : 10,
+  },
+  message1:{
+    textAlign:'center',
+    fontSize:17,
+    marginBottom:2
+  },
+  message2:{
+    textAlign:'center',
+    fontSize:17
+  },
+  signInUsingContainer:{
+    marginVertical : 20,
+  },
+  signInUsing:{
+    textDecorationLine:'underline',
+    textDecorationStyle:"solid",
+    fontSize : 20, 
+  },
+  authOptions:{
+    flexDirection:'row',
+    marginVertical : 10
+  },
+  googleIcon:{
+    width:25,
+    height:25,
+    marginRight : 10, 
+  },
+  facebookIcon:{
+    width:25,
+    height:25,
+    marginLeft : 10, 
+  }
+
 });

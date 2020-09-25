@@ -15,10 +15,12 @@ const serviceProvider = async()=>{
 
         TrackPlayer.addEventListener('remote-jump-backward', async () => {
                 const currentPosition = await TrackPlayer.getPosition()
-                TrackPlayer.seekTo(currentPosition - 10)
+                if(currentPosition<=10){
+                        TrackPlayer.seekTo(0)
+                }else{
+                        TrackPlayer.seekTo(currentPosition - 10)
+                }
         });
-
-        
 
         TrackPlayer.addEventListener('remote-next',()=>{
             TrackPlayer.skipToNext()

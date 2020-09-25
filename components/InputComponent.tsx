@@ -2,12 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, Keyboard } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/color-palete";
-import { Entypo } from "@expo/vector-icons";
+import Entypo from 'react-native-vector-icons/Entypo'
 
 export const InputComponent = ({ label, value, setValue, ...props }) => {
   return (
     <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
       <View style={styles.together}>
         <TextInput
           value={value}
@@ -18,7 +17,7 @@ export const InputComponent = ({ label, value, setValue, ...props }) => {
           placeholder={props.placeholder}
         />
         {props.icon ? (
-          <Entypo name={props.icon} size={24} color="black" />
+          <Entypo name={props.icon} size={20} color={Colors.secondary} />
         ) : null}
       </View>
     </View>
@@ -28,6 +27,8 @@ export const InputComponent = ({ label, value, setValue, ...props }) => {
 const styles = StyleSheet.create({
   inputContainer: {
     marginVertical: 10,
+    justifyContent:'center',
+    alignItems:'center',
   },
   inputLabel: {
     padding: 10,
@@ -35,17 +36,16 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
   textInput: {
-    height: 30,
-    borderBottomColor: Colors.secondary,
-    borderBottomWidth: 1,
     color: Colors.primary,
-    fontSize: 20,
-    paddingHorizontal: 10,
+    fontSize: 18,
     width: "90%",
   },
   together: {
-    paddingHorizontal: 10,
+    borderBottomColor: Colors.secondary,
+    borderBottomWidth: 2,
     flexDirection: "row",
     justifyContent: "space-around",
+    alignItems:'center',
+    width:'90%',
   },
 });

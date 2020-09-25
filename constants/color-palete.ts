@@ -3,7 +3,7 @@ export default {
   secondary: "#127681",
   danger: "#e84a5f",
   background: "#dae1e7",
-  menu: "#27496d",
+  menu: "#aaaaaa",
   logobackground: "#c3edea",
   headerText: "#f0f0f0",
   shadow: "#251f44",

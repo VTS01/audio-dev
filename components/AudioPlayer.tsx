@@ -1,9 +1,10 @@
 import React,{useState,useEffect,useCallback} from 'react'
 
-import {View, Text, StyleSheet, Image ,TouchableWithoutFeedback,Alert,TouchableNativeFeedback} from 'react-native'
+import {View, Text, StyleSheet, Image ,Alert,TouchableOpacity,Share} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import TrackPlayer from 'react-native-track-player';
-import TrackPlayerEvents  from 'react-native-track-player';
 
 import {MusicProgressBar} from './AudioPlayerProgressBar'
 
@@ -11,8 +12,6 @@ export const AudioPlayer = ({track,setShowModal})=>{
     const [trackPlayerLoaded,setTrackPlayerLoaded] = useState(false)
     const [isPlaying,setIsPlaying] = useState(false)
     const [playerStopped,setIsStopped] = useState(true)
-    const [progress,setProgress] = useState(.2)
-    const [currentTrack,setCurrentTrack] = useState<{}>()
     
     const start =useCallback(async () => {
         try{
@@ -23,23 +22,19 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     TrackPlayer.CAPABILITY_PLAY,
                     TrackPlayer.CAPABILITY_PAUSE,
                     TrackPlayer.CAPABILITY_SEEK_TO,
-                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
                     TrackPlayer.CAPABILITY_JUMP_FORWARD,
                     TrackPlayer.CAPABILITY_JUMP_BACKWARD,
                 ],
                 compactCapabilities: [
                     TrackPlayer.CAPABILITY_PLAY,
                     TrackPlayer.CAPABILITY_PAUSE,
-                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                    TrackPlayer.CAPABILITY_JUMP_FORWARD,
+                    TrackPlayer.CAPABILITY_JUMP_BACKWARD,
                 ],
                 notificationCapabilities: [
                     TrackPlayer.CAPABILITY_PLAY,
                     TrackPlayer.CAPABILITY_PAUSE,
                     TrackPlayer.CAPABILITY_SEEK_TO,
-                    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-                    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
                     TrackPlayer.CAPABILITY_JUMP_FORWARD,
                     TrackPlayer.CAPABILITY_JUMP_BACKWARD,
                 ],
@@ -87,7 +82,11 @@ export const AudioPlayer = ({track,setShowModal})=>{
 
     const backwardHandler = async()=>{
         const currentPosition = await TrackPlayer.getPosition()
-        TrackPlayer.seekTo(currentPosition - 10)
+        if(currentPosition<=10){
+            TrackPlayer.seekTo(0)
+        }else{
+            TrackPlayer.seekTo(currentPosition - 10)
+        }
     }
 
     const forwardHandler = async()=>{
@@ -95,74 +94,73 @@ export const AudioPlayer = ({track,setShowModal})=>{
         TrackPlayer.seekTo(currentPosition + 10)
     }
 
-    const nextTrackHandler = async ()=>{
-        try{
-            await TrackPlayer.skipToNext()
-            const currTrackId = await TrackPlayer.getCurrentTrack()
-            const currTrackObj = await TrackPlayer.getTrack(currTrackId)
-            setCurrentTrack(currTrackObj)
-        }
-        catch(err){
-            Alert.alert(`${err.message}`)
-        }
-    }
+    // const nextTrackHandler = async ()=>{
+    //     try{
+    //         await TrackPlayer.skipToNext()
+    //         const currTrackId = await TrackPlayer.getCurrentTrack()
+    //         const currTrackObj = await TrackPlayer.getTrack(currTrackId)
+    //         setCurrentTrack(currTrackObj)
+    //     }
+    //     catch(err){
+    //         Alert.alert(`${err.message}`)
+    //     }
+    // }
 
-    const previousTrackHandler = async ()=>{
-        try{
-            await TrackPlayer.skipToPrevious()
-            const currTrackId = await TrackPlayer.getCurrentTrack()
-            const currTrackObj = await TrackPlayer.getTrack(currTrackId)
-            setCurrentTrack(currTrackObj)
-        }
-        catch(err){
-            Alert.alert(`${err.message}`)
-        }
-    }
+    // const previousTrackHandler = async ()=>{
+    //     try{
+    //         await TrackPlayer.skipToPrevious()
+    //         const currTrackId = await TrackPlayer.getCurrentTrack()
+    //         const currTrackObj = await TrackPlayer.getTrack(currTrackId)
+    //         setCurrentTrack(currTrackObj)
+    //     }
+    //     catch(err){
+    //         Alert.alert(`${err.message}`)
+    //     }
+    // }
 
     const sliderHandler = (value:number)=>{
         TrackPlayer.seekTo(value)
         // setIsPlaying(true)
     }
 
-    // TrackPlayer.addEventListener('STATE_PLAYING', () => {
-    //     // setIsPlaying(true)
-    //     // handleTrackPlay()
-    // });
-
     TrackPlayer.addEventListener('remote-play', () => {
         handleTrackPlay()
-        setIsPlaying(true)
     });
     
-      TrackPlayer.addEventListener('remote-pause', () => {
-        handleTrackPause()
-      });
+    TrackPlayer.addEventListener('remote-pause', () => {
+    handleTrackPause()
+    });
+
+    const handleShareButtonClick = async (url: string)=>{
+        try{
+           const result = await Share.share({
+                message : "Listen to this wonderful work.",
+                url:url,
+                title:"Mello",
+            })
+            console.log(result.action);
+            
+            if(result.action === Share.sharedAction){
+                if(result.activityType){
+                    console.log(result.activityType);
+                }
+                else{
+                    console.log('shared');
+                }
+            }else if(result.action===Share.dismissedAction){
+                console.log("not shared");
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }
     
-      TrackPlayer.addEventListener('remote-jump-forward', async() => {
-        // forwardHandler()
-      });
-    
-      TrackPlayer.addEventListener('remote-jump-backward',async () => {
-        // backwardHandler()
-
-      });
-
-      TrackPlayer.addEventListener('remote-seek',async (pos)=>{
-        //   TrackPlayer.seekTo(pos)
-      })
-
-      TrackPlayer.addEventListener('remote-next',()=>{
-        //   TrackPlayer.seekTo(pos)
-      })
-
-      TrackPlayer.addEventListener('remote-previous',()=>{
-        //   TrackPlayer.seekTo(pos)
-      })
 
     return(
         <View style={styles.screen}> 
             <View style={styles.header}>
-                <TouchableNativeFeedback
+                <TouchableOpacity
+                    activeOpacity={.5}
                     onPress={handleShowModel}
                 >
                     <AntDesign 
@@ -170,13 +168,17 @@ export const AudioPlayer = ({track,setShowModal})=>{
                         size = {24}
                         color = "black"
                     />
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
                 <Text style={styles.headerText}>PLAYING NOW</Text>
-                <AntDesign 
-                    name="infocirlceo" 
-                    size={24} 
-                    color="black" 
-                />
+                <TouchableOpacity
+                    activeOpacity={.5}
+                    onPress={()=>handleShareButtonClick()}
+                >
+                    <FontAwesome 
+                        name="share-alt" 
+                        size={24} 
+                        color="black" />
+                </TouchableOpacity>
             </View>
             <View style={styles.controlSection}>
                 <View style={styles.trackCoverImageContainer}>
@@ -195,17 +197,18 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     setIsStopped = {setIsStopped}
                 />
                 <View style={styles.controlButton}>
-                    <TouchableWithoutFeedback
-                        onLongPress={backwardHandler}
-                        onPress={previousTrackHandler}
+                    <TouchableOpacity
+                        activeOpacity={.5}
+                        onPress={backwardHandler}
                     >
-                        <AntDesign 
-                            name="fastbackward" 
-                            size={20} 
-                            color="black" 
+                        <MaterialIcons 
+                            name="replay-10" 
+                            size={30} 
+                            color="black"
                         />
-                    </TouchableWithoutFeedback>
-                    <TouchableNativeFeedback
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={.5}
                         onPress={isPlaying ? handleTrackPause : handleTrackPlay}
                     >
                         <View style={styles.playButtonContainer}>
@@ -215,17 +218,17 @@ export const AudioPlayer = ({track,setShowModal})=>{
                                 color="black" 
                             />
                         </View>
-                    </TouchableNativeFeedback>
-                    <TouchableWithoutFeedback
-                        onLongPress={forwardHandler}
-                        onPress={nextTrackHandler}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={.5}
+                        onPress={forwardHandler}
                     >
-                        <AntDesign 
-                            name="fastforward" 
-                            size={20} 
+                        <MaterialIcons 
+                            name="forward-10" 
+                            size={30} 
                             color="black" 
                         />
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
