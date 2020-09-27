@@ -3,6 +3,7 @@ import React,{useState,useEffect,useCallback} from "react";
 import firestore from '@react-native-firebase/firestore';
 import {View ,StyleSheet,Alert, ActivityIndicator,RefreshControl} from "react-native";
 import {useDispatch,useSelector} from "react-redux"
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import { Catagory } from "../components/catagories/Catagory";
 import {setAudios} from  "../store/actions/audiosActions"
@@ -26,7 +27,7 @@ export const HomePage = () => {
     const languages:{}[] = []
     const categories:{}[] = []
     const collRef = firestore().collection(`mello/data/audios`)
-    const collRef1 = firestore().collection(`mello/data/languages`)
+    const collRef1 = firestore().collection(`mello/data/languages`).orderBy("name","asc")
     const collRef2 = firestore().collection(`mello/data/categories`).orderBy("name","asc")
 
     try{
@@ -45,7 +46,8 @@ export const HomePage = () => {
               duration : snap.data().duration,
               category : snap.data().category,
               status : snap.data().status,
-              userAvatar : snap.data().author.avatar
+              userAvatar : snap.data().author.avatar,
+              language : snap.data().language
             })
         }
         else{
@@ -60,7 +62,8 @@ export const HomePage = () => {
         if(snap.exists){
           languages.push({
             id : snap.id,
-            data : snap.data().name
+            name : snap.data().name,
+            dbname : 'not-assigned'
           })
         }
         else{
@@ -98,11 +101,19 @@ export const HomePage = () => {
     }
   ,[dispatch])
 
+  // const handleDynamicLink = (link) => {
+  //   console.log("Homepage",link)
+  // };
+
   useEffect(() =>{
     setShowSpinner(true)
     fetchData().then(function(){
       setShowSpinner(false)
     })
+
+    // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    // return () => unsubscribe();
+
   },[fetchData])
 
   if(showSpinner){

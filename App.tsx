@@ -6,13 +6,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {createStore,combineReducers} from 'redux';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import AudiosReducer from "./store/reducer/audios"
 import LanguagesReducer from "./store/reducer/languages"
 import CategoriesReducer from "./store/reducer/categories"
 import UserReducer from "./store/reducer/user"
 import Colors from './constants/color-palete';
-import {LoginstackNavigator} from "./navigation/navigations"
 import {Layout} from "./screens/Layout"
 
 const rootReducer = combineReducers({
@@ -27,6 +27,11 @@ const store = createStore(rootReducer)
 const App = ()=>{
   useEffect(()=>{
     SplashScreen.hide()
+    // dynamicLinks()
+    //   .getInitialLink()
+    //   .then(link => {
+    //     console.log("APP",link);
+  //   });
   },[])
 
   return (

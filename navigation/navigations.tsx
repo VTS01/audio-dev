@@ -12,6 +12,11 @@ import {LoginScreen} from '../screens/LoginScreen';
 import {SignupScreen} from '../screens/SignupScreen';
 import {HomePage} from '../screens/HomePage';
 import {ProfilePage} from "../screens/ProfilePage"
+import {SearchPage} from "../screens/SearchPage"
+import {LanguagesPage} from "../screens/LanguagesPage" 
+import {CategoriesPage} from "../screens/CategoriesPage" 
+import {AudiosPage} from "../screens/AudiosPage" 
+
 import Colors from "../constants/color-palete"
 
 const Stack = createStackNavigator();
@@ -29,8 +34,8 @@ export const LoginstackNavigator = () => (
             <Image 
               source={require('../assets/trans_mello.png')} 
               style={{
-                width:50,
-                height:50,
+                width:70,
+                height:70,
                 resizeMode:'center'
               }}
             />),
@@ -46,8 +51,8 @@ export const LoginstackNavigator = () => (
             <Image 
               source={require('../assets/trans_mello.png')} 
               style={{
-                width:50,
-                height:50,
+                width:70,
+                height:70,
                 resizeMode:'center'
               }}
             />),
@@ -56,7 +61,7 @@ export const LoginstackNavigator = () => (
     </Stack.Navigator>
   );
   
-const HomePageStackNavigator = () => (
+const HomePageStackNavigator = ({navigation}) => (
     <Stack.Navigator>
       <Stack.Screen
         name="Home Page"
@@ -68,8 +73,8 @@ const HomePageStackNavigator = () => (
             <Image 
               source={require('../assets/trans_mello.png')} 
               style={{
-                width:50,
-                height:50,
+                width:70,
+                height:70,
                 resizeMode:'center'
               }}
             />),
@@ -78,6 +83,95 @@ const HomePageStackNavigator = () => (
               <TouchableOpacity
                 style={styles.searchIcon}
                 activeOpacity={.5}
+                onPress={()=>navigation.navigate("Search Page")}
+              >
+                <AntDesign
+                  name="search1"
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+            )
+          }
+        }}
+      />
+      <Stack.Screen
+        name="Search Page"
+        component={SearchPage}
+        options={{
+          headerStyle: styles.appHeader,
+          headerTintColor: Colors.headerText,
+          headerTitle:()=>(
+            <Image 
+              source={require('../assets/trans_mello.png')} 
+              style={{
+                width:70,
+                height:70,
+                resizeMode:'center'
+              }}
+            />),
+        }}
+      />
+      <Stack.Screen
+        name="Categories Page"
+        component={CategoriesPage}
+        options={{
+          headerStyle: styles.appHeader,
+          headerTintColor: Colors.headerText,
+          headerTitle:"Categories",
+          headerRight:(props)=>{
+            return(
+              <TouchableOpacity
+                style={styles.searchIcon}
+                activeOpacity={.5}
+                onPress={()=>navigation.navigate("Search Page")}
+              >
+                <AntDesign
+                  name="search1"
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+            )
+          }
+        }}
+      />
+      <Stack.Screen
+        name="Languages Page"
+        component={LanguagesPage}
+        options={{
+          headerStyle: styles.appHeader,
+          headerTintColor: Colors.headerText,
+          headerTitle:"Languages",
+          headerRight:(props)=>{
+            return(
+              <TouchableOpacity
+                style={styles.searchIcon}
+                activeOpacity={.5}
+                onPress={()=>navigation.navigate("Search Page")}
+              >
+                <AntDesign
+                  name="search1"
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+            )
+          }
+        }}
+      />
+      <Stack.Screen
+        name="Audios Page"
+        component={AudiosPage}
+        options={{
+          headerStyle: styles.appHeader,
+          headerTintColor: Colors.headerText,
+          headerRight:(props)=>{
+            return(
+              <TouchableOpacity
+                style={styles.searchIcon}
+                activeOpacity={.5}
+                onPress={()=>navigation.navigate("Search Page")}
               >
                 <AntDesign
                   name="search1"
@@ -104,8 +198,8 @@ const ProfilePageStackNavigator = ()=>(
             <Image 
               source={require('../assets/trans_mello.png')} 
               style={{
-                width:50,
-                height:50,
+                width:70,
+                height:70,
                 resizeMode:'center'
               }}
             />),

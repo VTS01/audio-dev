@@ -3,7 +3,7 @@ import React,{useState} from 'react'
 import {View,Text,StyleSheet,Image,Modal,TouchableOpacity, Alert} from "react-native"
 import { FlatList } from "react-native-gesture-handler";
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import RNfetchBlob from "react-native-fetch-blob"
+import RNfetchBlob from "rn-fetch-blob"
 
 import Colors from "../constants/color-palete"
 import {Card} from "./Card"
@@ -63,8 +63,8 @@ export const AudiosList = (props)=>{
                         <Card>
                             <View style={styles.item}>
                                 <Image
-                                    // source={{uri : item.artwork}}
-                                    source={require('../assets/catagories/art-and-culture.jpg')}
+                                    source={{uri : item.artwork}}
+                                    // source={require('../assets/catagories/art-and-culture.jpg')}
                                     style={{ height: '100%', width: '100%' }}
                                 ></Image>
                                 <View style={styles.durationContainer}>
@@ -165,7 +165,8 @@ const styles = StyleSheet.create({
     audioDescription:{
         marginVertical:10,
         paddingHorizontal:10,
-        fontSize:15
+        fontSize:15,
+        textTransform:'capitalize'
     },
     creatorInfoContainer:{
         borderWidth:2,

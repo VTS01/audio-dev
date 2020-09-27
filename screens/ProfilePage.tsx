@@ -41,7 +41,10 @@ export const ProfilePage = ()=>{
                         source={user.photoURL===null?require('../assets/profile-icon.jpg'):{uri:user.photoURL}}
                     />
                 </View>
-                <Text style={styles.userName}>{user.displayName}</Text>
+                <View style={styles.nameAndMailContainer}>
+                    <Text style={styles.userName}>{user.displayName}</Text>
+                    <Text style={styles.userMail}>{user.email}</Text>
+                </View>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -66,16 +69,18 @@ export const ProfilePage = ()=>{
                         <AntDesign name="message1" size={24} color={Colors.secondary} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity
-                        activeOpacity={0.5}
-                        onPress={handleLogoutButtonClick}
-                    >
-                        <View style={styles.logoutButton}>
-                            <Text style={styles.logOutText}>
-                                Log out
-                            </Text>
-                        </View>
-                </TouchableOpacity>
+                <View style={styles.logoutButtonContainer}>
+                    <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={handleLogoutButtonClick}
+                        >
+                            <View style={styles.logoutButton}>
+                                <Text style={styles.logOutText}>
+                                    Log out
+                                </Text>
+                            </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )
@@ -91,23 +96,28 @@ const styles = StyleSheet.create({
     },
     userDetailsContainer:{
         width:'100%',
-        height:'40%',
+        height:'35%',
         alignItems:'center',
-        justifyContent:'space-around'
+        justifyContent:'space-around',
     },
     userAvatarContainer:{
-        width:150,
-        height:150,
-        borderRadius:75,
+        width:100,
+        height:100,
+        borderRadius:50,
         overflow:'hidden'
     },
     userAvatar:{
        width:'100%',
        height:'100%' 
     },
+
     userName:{
         fontSize:20,
         fontWeight:'bold'
+    },
+    userMail:{
+        fontSize:15,
+        color:Colors.menu
     },
     buttonContainer:{
         width:'100%',
@@ -145,6 +155,10 @@ const styles = StyleSheet.create({
         fontSize:15,
         color:Colors.secondary,
         marginRight:10,
+    },
+    logoutButtonContainer:{
+        width:'100%',
+        alignItems:'center'
     },
     logoutButton:{
         width:'30%',

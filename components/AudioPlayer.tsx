@@ -5,13 +5,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import TrackPlayer from 'react-native-track-player';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import {MusicProgressBar} from './AudioPlayerProgressBar'
+import {Loader} from "./Loader"
 
 export const AudioPlayer = ({track,setShowModal})=>{
     const [trackPlayerLoaded,setTrackPlayerLoaded] = useState(false)
     const [isPlaying,setIsPlaying] = useState(false)
     const [playerStopped,setIsStopped] = useState(true)
+    const [showLoader,setShowLoader] = useState(false)
     
     const start =useCallback(async () => {
         try{
@@ -131,15 +134,28 @@ export const AudioPlayer = ({track,setShowModal})=>{
     handleTrackPause()
     });
 
-    const handleShareButtonClick = async (url: string)=>{
+    const handleShareButtonClick = async ()=>{
+        setShowLoader(true)
         try{
-           const result = await Share.share({
-                message : "Listen to this wonderful work.",
-                url:url,
-                title:"Mello",
-            })
-            console.log(result.action);
+            const link = await dynamicLinks().buildShortLink({
+                domainUriPrefix: 'https://melloeverywhere.page.link',
+                link: `http://creator.yourmello.com/query?docId=${track.id}`,
+                android:{
+                    packageName:'com.audiogram'
+                },
+                social:{
+                    imageUrl:track.artwork,
+                    descriptionText:"Listen this wonderful song.",
+                    title:track.title
+                },
+            });            
             
+            const result = await Share.share({
+                message : link,
+            })
+            
+            setShowLoader(false)
+
             if(result.action === Share.sharedAction){
                 if(result.activityType){
                     console.log(result.activityType);
@@ -172,7 +188,7 @@ export const AudioPlayer = ({track,setShowModal})=>{
                 <Text style={styles.headerText}>PLAYING NOW</Text>
                 <TouchableOpacity
                     activeOpacity={.5}
-                    onPress={()=>handleShareButtonClick()}
+                    onPress={handleShareButtonClick}
                 >
                     <FontAwesome 
                         name="share-alt" 
@@ -231,6 +247,9 @@ export const AudioPlayer = ({track,setShowModal})=>{
                     </TouchableOpacity>
                 </View>
             </View>
+            {
+                showLoader&&<Loader/>
+            }
         </View>
     )
 }
@@ -270,7 +289,7 @@ const styles = StyleSheet.create({
         borderRadius : 20,
         overflow : 'hidden',
         elevation : 5,
-        backgroundColor:'white'
+        backgroundColor:'white',
     },
     trackCoverImage:{
         width : '100%',

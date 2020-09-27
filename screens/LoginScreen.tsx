@@ -17,31 +17,14 @@ import Colors from '../constants/color-palete';
 import {InputComponent} from '../components/InputComponent';
 import {Divider} from '../components/Divider';
 import {setUser} from "../store/actions/userActions"
+import {Loader} from "../components/Loader"
 
 export const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showSpinner,setShowSpinner] = useState(false)
 
   const dispatch = useDispatch()
-  
-  // Handle user state changes
-  const onAuthStateChanged = (_user) => {
-    if(_user){
-      const loggedUser = {
-        displayName:_user.displayName,
-        photoURL : _user.photoURL,
-        uid : _user.uid,
-        email:_user.email,
-        role:"listener"
-      }
-      dispatch(setUser(loggedUser))      
-    }
-  };
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
 
   const handleEmailChange = (_email: string) => {
     setEmail(_email);
@@ -52,6 +35,18 @@ export const LoginScreen = ({navigation}) => {
   };
 
   const loginWithEmail = () => {
+    if(email===''){
+      Alert.alert(
+        'Warning!!!',
+        'Enter valid email or password.',
+        [{
+          text:'Ok',
+          style:'cancel'
+        }]
+      )
+      return null
+    }
+    setShowSpinner(true)
     auth()
       .signInWithEmailAndPassword(email, password)
       .then((res) => {
@@ -65,12 +60,14 @@ export const LoginScreen = ({navigation}) => {
         dispatch(setUser(loggedUser))
       })
       .catch((err) => {
+        setShowSpinner(false)
         const errMessage = err.message.slice(21,) 
         Alert.alert(
             'Error!!',
             `${errMessage}`, 
             [{
-              text: 'Ok'
+              text: 'Ok',
+              style:'cancel'
             }]
         );
       });
@@ -103,7 +100,30 @@ export const LoginScreen = ({navigation}) => {
   }
 
   const handleForgotPassword = ()=>{
-
+    setShowSpinner(true)
+    auth().sendPasswordResetEmail(email)
+    .then(()=>{
+      setShowSpinner(false)
+      Alert.alert(
+        'Alert!!!',
+        'We have send the password reset link to your mail.',
+        [{
+          text:'Ok',
+          style:'cancel'
+        }]
+      )
+    })
+    .catch((err)=>{
+      setShowSpinner(false)
+      Alert.alert(
+        'Error!!!',
+        `${err.message}`,
+        [{
+          text:'Ok',
+          style:'cancel'
+        }]
+      )
+    })
   }
 
   return (
@@ -170,12 +190,21 @@ export const LoginScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
+      {
+        showSpinner&&<Loader/>
+      }
     </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: "white",
+  },
   button: {
     paddingHorizontal: 20,
     height: 50,
@@ -192,24 +221,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   googleButton: {width: 192, height: 48},
-  screen: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: "white",
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    backgroundColor: Colors.logobackground,
-    borderWidth: 1,
-    marginVertical: 30,
-    borderRadius: 50,
-  },
   tagLineContainer:{
     flexDirection:'row',
     marginVertical:20,
-    alignItems:'flex-end'
+    alignItems:'flex-end',
   },
   tagLine1: {
     fontSize: 22,
@@ -254,6 +269,5 @@ const styles = StyleSheet.create({
     width:25,
     height:25,
     marginLeft : 10, 
-  }
-
+  },
 });
