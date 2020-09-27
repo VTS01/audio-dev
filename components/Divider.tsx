@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
-    marginVertical: 20,
+    marginVertical: 10,
   },
   divider: {
     borderWidth: 1,
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     top: 2,
   },
   text: {
-    fontSize: 18,
+    fontSize: 15,
     color: Colors.secondary,
     marginHorizontal: 10,
   },

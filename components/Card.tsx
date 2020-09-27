@@ -4,19 +4,13 @@ import Colors from "../constants/color-palete";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const Card = (props) => {
-  
-  const handleCardPress = ()=>{
-    props.setSelectedTrack(props.item)
-    props.setShowModal(true)
-  }
-
   return (
-    <TouchableOpacity
-      onPress={handleCardPress}
+    <View
       style={{ ...styles.card, ...props.style }}
     >
       {props.children}
-    </TouchableOpacity>
+
+    </View>
   );
 };
 
@@ -24,8 +18,9 @@ const styles = StyleSheet.create({
   card: {
     shadowColor: Colors.shadow,
     shadowOpacity: 0.1,
-    height: 155,
-    width: 155,
+    height: 300,
+    position:'relative',
+    width: '95%',
     margin: 10,
     elevation : 5,
     backgroundColor : 'white',
@@ -34,6 +29,6 @@ const styles = StyleSheet.create({
       width : 1,
       height : 1
     },
-    
+    paddingHorizontal:5,
   },
 });

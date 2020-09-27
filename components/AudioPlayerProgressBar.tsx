@@ -6,7 +6,13 @@ import Slider from '@react-native-community/slider'
 import TrackPlayer,{STATE_STOPPED} from 'react-native-track-player';
 
 export class MusicProgressBar extends TrackPlayer.ProgressComponent {
+    returnDuration = (seconds:number)=>{
+        const duration = new Date(seconds * 1000).toISOString().substr(14, 5);
+        return duration
+    }
+
     
+
     render() {
         const  {setIsPlaying,setIsStopped} = this.props
         TrackPlayer.getState().then(function(state){
@@ -18,7 +24,7 @@ export class MusicProgressBar extends TrackPlayer.ProgressComponent {
         
         return (
             <View style={styles.progressBarContainer}>
-                <Text>{parseInt(this.state.position.toFixed()) - parseInt(this.state.position.toFixed())%60 + ':'  + parseInt(this.state.position.toFixed())%60}</Text>
+                <Text>{this.returnDuration(parseInt(this.state.position.toFixed()))}</Text>
                 <View style={styles.progressBar}>
                     <Slider
                         style={{width:'100%'}} 
@@ -29,7 +35,7 @@ export class MusicProgressBar extends TrackPlayer.ProgressComponent {
                         onSlidingComplete={this.props.sliderHandler}
                     />
                 </View>
-                <Text>{this.state.duration - this.state.duration%60}:{this.state.duration%60}</Text>
+                <Text>{this.returnDuration(this.state.duration)}</Text>
             </View>
         );
     }
