@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Button, Alert, Image,SafeAreaView} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore'
 import {useDispatch} from "react-redux"
 
 import {Divider} from '../components/Divider';
@@ -42,14 +43,23 @@ export const SignupScreen = ({navigation}) => {
     auth()
       .signInWithEmailAndPassword(email, password)
       .then((res) => {
-        const loggedUser = {
-          displayName:res.user.displayName,
-          photoURL : res.user.photoURL,
-          uid : res.user.uid,
-          email:res.user.email,
-          role:"listener"
-        }
-        dispatch(setUser(loggedUser))
+        const ref = firestore().doc(`mello/data/user/${res.user.uid}`)
+        ref.get()
+        .then((res1)=>{
+          const user = res1.data()
+          dispatch(setUser(user))
+        })
+        .catch((err1)=>{
+          const errMessage = err1.message
+          Alert.alert(
+            'Error!!',
+            `${errMessage}`, 
+            [{
+              text: 'Ok',
+              style:'cancel'
+            }]
+        );
+        })
       })
       .catch((err) => {
         setShowLoader(false)
@@ -68,8 +78,22 @@ export const SignupScreen = ({navigation}) => {
     setShowLoader(true)
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        loginWithEmail();
+      .then((res) => {
+        const userData = {
+          displayName:res.user.displayName,
+          email:res.user.email,
+          photoURL : res.user.photoURL,
+          role:"listener",
+          uid : res.user.uid,
+        }
+        const ref = firestore().doc(`mello/data/user/${res.user.uid}`)
+        ref.set(userData)
+        .then(()=>{
+          loginWithEmail();
+        })
+        .catch((err)=>{
+          console.log(err);
+        })
       })
       .catch((err) => {
         setShowLoader(false)

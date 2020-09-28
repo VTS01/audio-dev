@@ -1,24 +1,51 @@
-import React from "react"
+import React, { useState } from "react"
 
-import {View,Text,StyleSheet,Image,TouchableOpacity,Linking} from "react-native"
+import {View,Text,StyleSheet,Image,TouchableNativeFeedback,TouchableWithoutFeedback,Linking, Alert,Share} from "react-native"
 import {useSelector,useDispatch} from "react-redux"
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore'
 
 import Colors from "../constants/color-palete"
 import {removeUser} from "../store/actions/userActions"
+import {DropDown} from "../components/DropDown"
+import {Loader} from "../components/Loader"
 
 export const ProfilePage = ()=>{
     const user = useSelector(state => state.user.user)
+    const categories =  useSelector(state => state.categories.categories)
+    const [selectedInterest,setSelectedInterest] = useState('Select')
+    const [showDropDown,setShowDropDown] = useState(false)
+    const [showLoader,setShowLoader] = useState(false)
     const dispatch = useDispatch()
 
     const handleFeedBackButtonClick = ()=>{
         Linking.openURL('mailto:info@yourmello.com?subject=Feedback Mail')
     }
 
-    const handleReferToFriendButtonClick = ()=>{
+    const handleReferToFriendButtonClick = async ()=>{
+        setShowLoader(true)
+        try{
+            const result = await Share.share({
+                message: 'Put App Link Here',//App link from play store
+            });
 
+            setShowLoader(false)
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                 console.log(result.activityType);
+                }else {
+                  console.log('shared');
+                }
+            }else if (result.action === Share.dismissedAction) {
+            console.log('not shared');
+          }
+        }catch (err) {
+            setShowLoader(false)
+          console.log(err);
+        }
     }
 
     const handleLogoutButtonClick = ()=>{
@@ -30,6 +57,49 @@ export const ProfilePage = ()=>{
         .catch((err)=>{
             console.log(err);
         })
+    }
+
+    const handleShowDropDown = ()=>{
+        setShowDropDown(true)
+    }
+
+    const handleCloseDropDown = ()=>{
+        setShowDropDown(false)
+    }
+
+    const handleInterestSelection = (val:string)=>{
+        setSelectedInterest(val)
+        handleCloseDropDown()
+    }
+
+    const handleSubmitUserInterest  = async ()=>{
+        setShowLoader(true)
+        try{
+            const ref = firestore().doc(`mello/data/user/${user.uid}`)
+            await ref.update({
+              interest : selectedInterest  
+            })
+            setShowLoader(false)
+            Alert.alert(
+                'Confirmation Message:',
+                'Your interested is successfully recorded.',
+                [{
+                    text:'Ok',
+                    style:'cancel'
+                }]
+            )
+        }catch(err){
+            setShowLoader(false)
+            const errMessage = err.message
+            Alert.alert(
+                'Error!!!',
+                `${errMessage}`,
+                [{
+                    text:'Ok',
+                    style:'cancel'
+                }]
+            )
+        }
     }
 
     return(
@@ -46,42 +116,84 @@ export const ProfilePage = ()=>{
                     <Text style={styles.userMail}>{user.email}</Text>
                 </View>
             </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={handleReferToFriendButtonClick}
+            <View style={styles.interestSelectorContainer}>
+                <Text style={styles.selectYourInterestTitle}>Select Your Interest:</Text>
+                <TouchableWithoutFeedback
+                    onPress={handleShowDropDown}
                 >
-                    <View style={styles.referButton}>
-                        <Text style={styles.buttonText}>
-                            Refer Mello to a friend
+                    <View style={styles.dropDownTextHolder}>
+                        <Text style={styles.dropDownText}>
+                            {selectedInterest}
                         </Text>
-                        <Fontisto name="persons" size={24} color={Colors.secondary} />
+                        <AntDesign name="caretdown" size={20} color="black" />
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={handleFeedBackButtonClick}
-                >
-                    <View style={styles.feedbackButton}>
-                        <Text style={styles.buttonText}>
-                            Your Feedback
-                        </Text>
-                        <AntDesign name="message1" size={24} color={Colors.secondary} />
-                    </View>
-                </TouchableOpacity>
-                <View style={styles.logoutButtonContainer}>
-                    <TouchableOpacity
-                            activeOpacity={0.5}
-                            onPress={handleLogoutButtonClick}
+                </TouchableWithoutFeedback>
+                {
+                    selectedInterest!=='Select'?
+                    <View style={styles.submitButtonContainer}>
+                        <TouchableNativeFeedback
+                            onPress={handleSubmitUserInterest}
                         >
-                            <View style={styles.logoutButton}>
-                                <Text style={styles.logOutText}>
-                                    Log out
+                            <View style={styles.submitButton}>
+                                <Text style={styles.submitText}>
+                                    Submit
                                 </Text>
-                            </View>
-                    </TouchableOpacity>
+                            </View> 
+                        </TouchableNativeFeedback>
+                    </View>
+                    :null 
+                }
+            </View>
+            {
+                   showDropDown&&
+                   <DropDown
+                        data={categories}
+                        setSelectedItem={handleInterestSelection}
+                        label='Your Interest.'
+                        closeDropDown={handleCloseDropDown}
+                   />
+            }
+            <View style={styles.buttonContainer}>
+                <View style={{overflow:'hidden',borderRadius:25}}>
+                    <TouchableNativeFeedback
+                        onPress={handleReferToFriendButtonClick}
+                    >
+                        <View style={styles.referButton}>
+                            <Text style={styles.buttonText}>
+                                Refer Mello to a friend
+                            </Text>
+                            <Fontisto name="persons" size={24} color={Colors.secondary} />
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+                <View style={{overflow:'hidden',borderRadius:25,marginTop:10}}>
+                    <TouchableNativeFeedback
+                        onPress={handleFeedBackButtonClick}
+                    >
+                        <View style={styles.feedbackButton}>
+                            <Text style={styles.buttonText}>
+                                Your Feedback
+                            </Text>
+                            <AntDesign name="message1" size={24} color={Colors.secondary} />
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+                <View style={styles.logoutButtonContainer}>
+                    <TouchableNativeFeedback
+                        onPress={handleLogoutButtonClick}
+                    >
+                        <View style={styles.logoutButton}>
+                            <Text style={styles.logOutText}>
+                                Log out
+                            </Text>
+                        </View>
+                    </TouchableNativeFeedback>
                 </View>
             </View>
+            {
+                showLoader&&
+                <Loader/>
+            }
         </View>
     )
 }
@@ -91,7 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         flex:1,
         justifyContent:'space-between',
-        paddingVertical:5,
+        // paddingVertical:5,
         alignItems:'center'
     },
     userDetailsContainer:{
@@ -110,10 +222,10 @@ const styles = StyleSheet.create({
        width:'100%',
        height:'100%' 
     },
-
     userName:{
         fontSize:20,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        textAlign:'center'
     },
     userMail:{
         fontSize:15,
@@ -147,7 +259,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         paddingVertical:8,
-        marginTop:15,
+        // marginTop:15,
         backgroundColor:'white',
         elevation:4
     },
@@ -158,7 +270,8 @@ const styles = StyleSheet.create({
     },
     logoutButtonContainer:{
         width:'100%',
-        alignItems:'center'
+        alignItems:'center',
+        marginBottom:5,
     },
     logoutButton:{
         width:'30%',
@@ -169,6 +282,37 @@ const styles = StyleSheet.create({
         alignItems:'center',
     },
     logOutText:{
+        fontSize:15,
+    },
+    selectYourInterestTitle:{
+        fontSize:20,
+        fontWeight:'bold',
+    },
+    dropDownTextHolder:{
+        marginVertical:5,
+        borderWidth:2,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingVertical:3,
+        paddingHorizontal : 5,
+    },
+    dropDownText:{
+        fontSize:16,
+    },
+    submitButtonContainer:{
+        marginVertical:10,
+        alignItems:'center'
+    },
+    submitButton:{
+        borderWidth:2,
+        paddingHorizontal:8,
+        paddingVertical:4,
+        backgroundColor:Colors.secondary,
+        borderColor:Colors.secondary,
+        elevation:8
+    },
+    submitText:{
+        color:'white',
         fontSize:15,
     }
 })

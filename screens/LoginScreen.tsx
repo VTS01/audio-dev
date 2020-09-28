@@ -11,6 +11,7 @@ import {
   GoogleSignin
 } from '@react-native-community/google-signin';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore'
 
 
 import Colors from '../constants/color-palete';
@@ -50,14 +51,23 @@ export const LoginScreen = ({navigation}) => {
     auth()
       .signInWithEmailAndPassword(email, password)
       .then((res) => {
-        const loggedUser = {
-          displayName:res.user.displayName,
-          photoURL : res.user.photoURL,
-          uid : res.user.uid,
-          email:res.user.email,
-          role:"listener"
-        }
-        dispatch(setUser(loggedUser))
+        const ref = firestore().doc(`mello/data/user/${res.user.uid}`)
+        ref.get()
+        .then((res1)=>{
+          const user = res1.data()
+          dispatch(setUser(user))
+        })
+        .catch((err1)=>{
+          const errMessage = err1.message
+          Alert.alert(
+            'Error!!',
+            `${errMessage}`, 
+            [{
+              text: 'Ok',
+              style:'cancel'
+            }]
+        );
+        })
       })
       .catch((err) => {
         setShowSpinner(false)

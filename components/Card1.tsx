@@ -1,6 +1,6 @@
 import React from "react"
 
-import {View,Text,StyleSheet,TouchableOpacity} from "react-native"
+import {View,Text,StyleSheet,TouchableNativeFeedback} from "react-native"
 
 export const  Card1 = ({item,style,navigation})=>{
     const handleClick = ()=>{
@@ -10,13 +10,12 @@ export const  Card1 = ({item,style,navigation})=>{
     }
     
     return(
-        <TouchableOpacity 
+        <TouchableNativeFeedback 
             style={{...styles.card,...style}}
-            activeOpacity={0.8}
             onPress={handleClick}
         >
             <Text style={styles.name}>{item.name}</Text>
-        </TouchableOpacity>
+        </TouchableNativeFeedback>
     )
 }
 
