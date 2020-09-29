@@ -148,6 +148,9 @@ const styles = StyleSheet.create({
         overflow:'hidden',
         marginRight:20
     },
+    musicDetails:{
+        width:'69%'
+    },
     songName:{
         fontSize:16,
         textTransform:'capitalize'
