@@ -1,39 +1,54 @@
 import React from 'react'
-import {View, Text, TouchableNativeFeedback, StyleSheet, ScrollView} from 'react-native'
+import {View, Text, TouchableNativeFeedback, StyleSheet, ScrollView,TouchableWithoutFeedback} from 'react-native'
+import { Screen } from 'react-native-screens'
 
-export const DropDown = ({data,setSelectedItem,label})=>{
+export const DropDown = ({data,setSelectedItem,label,closeDropDown})=>{
     return(
-        <View style={styles.dropdownContainer} >
-            <View style={styles.dropdownHeading}>
-                <Text style={styles.dropdownHeadingText}>Select {label}</Text>
+        <TouchableWithoutFeedback
+            onPress={closeDropDown}
+        >
+            <View style={styles.screen}>
+                <View style={styles.dropdownContainer} >
+                    <View style={styles.dropdownHeading}>
+                        <Text style={styles.dropdownHeadingText}>Select {label}</Text>
+                    </View>
+                    <ScrollView>
+                    {
+                        data.map(item =>{
+                            return(
+                                <TouchableNativeFeedback 
+                                    key={item.id} 
+                                    onPress={()=>setSelectedItem(item.name)}>
+                                        <View  style={styles.dropdownListItem}>
+                                            <Text style={styles.dropdownListItemText}>{item.name}</Text>
+                                        </View>
+                                </TouchableNativeFeedback>
+                            )
+                        })
+                    }
+                    </ScrollView>
+                </View>
             </View>
-            <ScrollView>
-            {
-                data.map(item =>{
-                    return(
-                        <TouchableNativeFeedback 
-                            key={item.id} 
-                            onPress={()=>setSelectedItem(item.type,item.id)}>
-                                <View  style={styles.dropdownListItem}>
-                                    <Text style={styles.dropdownListItemText}>{item.type}</Text>
-                                </View>
-                        </TouchableNativeFeedback>
-                    )
-                })
-            }
-            </ScrollView>
-        </View>
+        </TouchableWithoutFeedback>
     )
 } 
 
 const styles = StyleSheet.create({
+    screen:{
+        width:'100%',
+        height:'100%',
+        position:'absolute',
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'rgba(0,0,0,0.5)',
+        elevation:10,
+        // zIndex:10
+    },
     dropdownContainer : {
-        width : '90%',
-        height : '58%',
+        width : '80%',
+        height : '60%',
         backgroundColor : 'white',
-        position : 'absolute',
-        left:'5%',
-        top:'20%',
         justifyContent : 'center',
         elevation:10,
         shadowOffset : {

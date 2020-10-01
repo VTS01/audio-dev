@@ -17,6 +17,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import {MusicProgressBar} from './AudioPlayerProgressBar';
 import {Loader} from './Loader';
+import Colors from "../constants/color-palete"
 
 export const AudioPlayer = ({track, setShowModal}) => {
   const [trackPlayerLoaded, setTrackPlayerLoaded] = useState(false);
@@ -148,8 +149,8 @@ export const AudioPlayer = ({track, setShowModal}) => {
         },
         social: {
           imageUrl: track.artwork,
-          descriptionText: 'Listen this wonderful song.',
           title: track.title,
+          descriptionText: track.description,
         },
       });
 
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 30,
+    // paddingVertical: 30,
   },
   header: {
     width: '90%',
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop:30,
   },
   headerText: {
     fontSize: 20,
@@ -245,15 +247,16 @@ const styles = StyleSheet.create({
   },
   controlSection: {
     width: '90%',
-    height: '85%',
+    height: '84%',
     // borderWidth : 1,
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginBottom:30,
   },
   trackCoverImageContainer: {
-    width: '70%',
-    height: '50%',
+    width: '85%',
+    height: '55%',
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 5,
@@ -262,7 +265,6 @@ const styles = StyleSheet.create({
   trackCoverImage: {
     width: '100%',
     height: '100%',
-    // transform :
   },
   controlButton: {
     width: '70%',
@@ -285,12 +287,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   trackTitle: {
-    fontSize: 25,
+    fontSize: 22,
     fontWeight: '700',
+    textAlign:'center'
   },
   trackArtist: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#bbb',
+    color: Colors.menu,
   },
 });

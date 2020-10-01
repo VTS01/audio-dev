@@ -12,7 +12,6 @@ export const  Card1 = ({item,style,navigation})=>{
     return(
         <TouchableOpacity 
             style={{...styles.card,...style}}
-            activeOpacity={0.8}
             onPress={handleClick}
         >
             <Text style={styles.name}>{item.name}</Text>

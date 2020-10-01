@@ -7,6 +7,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Modal
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
@@ -17,12 +18,15 @@ import {setCategories} from '../store/actions/categoriesActions';
 import {setLanguages} from '../store/actions/languagesActions';
 import Colors from '../constants/color-palete';
 import {AudiosList} from '../components/AudiosList';
+import {AudioPlayer} from "../components/AudioPlayer"
 
 export const HomePage = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const categories = useSelector((state) => state.categories.categories);
   const audios = useSelector((state) => state.audios.audios);
+  const [receivedTrack,setReceivedTrack] = useState()
+  const [showModal,setShowModal] = useState(false)
 
   const dispatch = useDispatch();
 
@@ -98,18 +102,64 @@ export const HomePage = () => {
     setIsRefreshing(false);
   }, [dispatch]);
 
-  // const handleDynamicLink = (link) => {
-  //   console.log("Homepage",link)
-  // };
+  const handleDynamicLink = async (link) => {
+    if(link){
+      // const ref = 
+      const url = link.url
+      const docIdPart = url.split('?')[1]
+      const docId = docIdPart.split('=')[1]
+      try{
+        const ref = firestore().doc(`mello/data/audios/${docId}`)
+        const snap = await ref.get()
+        if(snap.exists){
+          const track = {
+            key: snap.id,
+            id: snap.id,
+            url: snap.data().audiourl,
+            title: snap.data().title,
+            artist: snap.data().author.name,
+            artwork: snap.data().audiocoverurl,
+            duration: snap.data().duration,
+            category: snap.data().category,
+            status: snap.data().status,
+            userAvatar: snap.data().author.avatar,
+            language: snap.data().language,
+            site: snap.data().site,
+            description: snap.data().description,
+          }
+          setReceivedTrack(track)
+          setShowModal(true)
+        }
+      }catch(err){
+        const errMessage = err.message
+        Alert.alert(
+          'Error!!!',
+          `${errMessage}`,
+          [{
+            text:'Ok',
+            style:'cancel',
+          }]
+        )
+      }
+    }
+  };
 
   useEffect(() => {
     setShowSpinner(true);
+    
     fetchData().then(function () {
       setShowSpinner(false);
     });
 
-    // const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
-    // return () => unsubscribe();
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    
+    dynamicLinks()
+    .getInitialLink()
+    .then(link => {
+      handleDynamicLink(link)
+    });
+
+    return () => unsubscribe();
   }, [fetchData]);
 
   if (showSpinner) {
@@ -118,6 +168,15 @@ export const HomePage = () => {
         <ActivityIndicator color={Colors.menu} size={50} />
       </View>
     );
+  }
+
+  if(showModal)
+  {
+    return(
+      <Modal visible={showModal} animationType="slide">
+        <AudioPlayer setShowModal={setShowModal} track={receivedTrack} />
+      </Modal>
+    )
   }
 
   return <AudiosList data={audios} />;
