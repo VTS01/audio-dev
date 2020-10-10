@@ -15,11 +15,16 @@
       },
       "oauth_client": [
         {
-          "client_id": "381110390220-g1h7j6gs982neo7ih271s963u4eh37li.apps.googleusercontent.com",
-          "client_type": 3,
-          "android_info" :{
-            "package_name": "com.audiogram"
+          "client_id": "381110390220-nd60muolqk3knjh1gqq5sjs98b9nueqs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.audiogram",
+            "certificate_hash": "5f9605e9a189484fdc51870d180c0176755cbe99"
           }
+        },
+        {
+          "client_id": "381110390220-g1h7j6gs982neo7ih271s963u4eh37li.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -33,6 +38,13 @@
             {
               "client_id": "381110390220-g1h7j6gs982neo7ih271s963u4eh37li.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "381110390220-90jcm4bdkemaghuubhrt75jes84634t5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mello"
+              }
             }
           ]
         }

@@ -17,7 +17,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 import {MusicProgressBar} from './AudioPlayerProgressBar';
 import {Loader} from './Loader';
-import Colors from "../constants/color-palete"
+import Colors from '../constants/color-palete';
 
 export const AudioPlayer = ({track, setShowModal}) => {
   const [trackPlayerLoaded, setTrackPlayerLoaded] = useState(false);
@@ -155,7 +155,7 @@ export const AudioPlayer = ({track, setShowModal}) => {
       });
 
       const result = await Share.share({
-        message: link,
+        message: `Listen to ${track.title} narrated by ${track.artist} for free on Mello ${link}`,
       });
 
       setShowLoader(false);
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop:30,
+    marginTop: 30,
   },
   headerText: {
     fontSize: 20,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginBottom:30,
+    marginBottom: 30,
   },
   trackCoverImageContainer: {
     width: '85%',
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   trackTitle: {
     fontSize: 22,
     fontWeight: '700',
-    textAlign:'center'
+    textAlign: 'center',
   },
   trackArtist: {
     fontSize: 18,

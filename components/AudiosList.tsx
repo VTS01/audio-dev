@@ -70,16 +70,13 @@ export const AudiosList = (props) => {
           return (
             <Card>
               <View style={styles.item}>
-                <Image
-                  source={{uri: item.artwork}}
-                  // source={require('../assets/catagories/art-and-culture.jpg')}
-                  style={{
-                    height: '100%',
-                    width: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                />
+                <View style={styles.imgContainer}>
+                  <Image
+                    source={{uri: item.artwork}}
+                    style={styles.audioImage}
+                    // source={require('../assets/catagories/art-and-culture.jpg')}
+                  />
+                </View>
                 <View style={styles.durationContainer}>
                   <AntDesign
                     name="clockcircleo"
@@ -142,6 +139,12 @@ export const AudiosList = (props) => {
 };
 
 const styles = StyleSheet.create({
+  audioImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     flexGrow: 1,
@@ -149,6 +152,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  imgContainer: {
+    width: '100%',
+    height: '100%',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   item: {
     flex: 1,
