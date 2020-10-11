@@ -8,6 +8,7 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,6 +17,7 @@ import RNfetchBlob from 'rn-fetch-blob';
 import Colors from '../constants/color-palete';
 import {Card} from './Card';
 import {AudioPlayer} from './AudioPlayer';
+import {PermissionsAndroid} from 'react-native';
 
 // const defaultUserAvatar
 
@@ -28,32 +30,41 @@ export const AudiosList = (props) => {
     setShowModal(true);
   };
 
-  const handleDownloadButtonClick = (url: any, filename: string) => {
-    const {fs} = RNfetchBlob;
-    const downloadDirectory = fs.dirs.DownloadDir;
-    const path = `${downloadDirectory}/${filename}`;
-
-    RNfetchBlob.config({
-      fileCache: false,
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        description: 'Downloading.',
-        path: path,
-      },
-    })
-      .fetch('GET', url)
-      .then((res) => {
-        console.log('Downloaded');
+  const handleDownloadButtonClick = async (url: any, filename: string) => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      const {fs} = RNfetchBlob;
+      const downloadDirectory = fs.dirs.DownloadDir;
+      const path = `${downloadDirectory}/${filename}`;
+      RNfetchBlob.config({
+        fileCache: false,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          description: 'Downloading.',
+          path: path,
+        },
       })
-      .catch((err) => {
-        Alert.alert('Error', `${err.message}`, [
-          {
-            text: 'Ok',
-            style: 'default',
-          },
-        ]);
-      });
+        .fetch('GET', url)
+        .then(() => {
+          console.log('Downloaded');
+        })
+        .catch((err) => {
+          Alert.alert('Error', `${err.message}`, [
+            {
+              text: 'Ok',
+              style: 'default',
+            },
+          ]);
+        });
+    } else {
+      Alert.alert(
+        'Permission Denied!',
+        'You need to give storage permission to download the file',
+      );
+    }
   };
 
   const returnDuration = (seconds: number) => {
