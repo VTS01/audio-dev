@@ -56,6 +56,7 @@ export const HomePage = () => {
             url: snap.data().audiourl,
             title: snap.data().title,
             artist: snap.data().author.name,
+            sourceAuthor: snap.data().sourceAuthor?.name || '--',
             artwork: snap.data().audiocoverurl,
             duration: snap.data().duration,
             category: snap.data().category,

@@ -114,7 +114,10 @@ export const AudiosList = (props) => {
                 </View>
                 <View style={styles.nameAndSourceNameContainer}>
                   <Text style={styles.sourceName}>{item?.site || '--'}</Text>
-                  <Text style={styles.creatorName}>By {item.artist}</Text>
+                  <Text style={styles.creatorName}>
+                    Written by {item.sourceAuthor}
+                  </Text>
+                  <Text style={styles.creatorName}>Read by {item.artist}</Text>
                 </View>
               </View>
               <View style={styles.buttonContainer}>
@@ -151,10 +154,9 @@ export const AudiosList = (props) => {
 
 const styles = StyleSheet.create({
   audioImage: {
+    resizeMode: 'center',
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   container: {
     flex: 1,
